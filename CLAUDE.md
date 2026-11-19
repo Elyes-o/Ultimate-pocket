@@ -63,7 +63,12 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
   `etat.evenement` (avec un `id` qui augmente) sert à déclencher les animations.
 - `src/combat/bot.js` : cerveau des bots Facile et Normal (`choisirActionsDuBot`).
 - Écrans : `app/(onglets)/combat.jsx` (deck + bots), `app/deck.jsx`, `app/partie.jsx` (le combat).
-- Composants : `CarteCombat` (élan, secousse, dégâts qui s'envolent), `JaugeEnergie`, `CinematiqueUltime`.
+- Composants : `CarteCombat` (entrée, élan, onde de choc colorée par type, voile rouge, PV qui descendent
+  doucement), `EffetsCombat` (`DegatsFlottants` + badge Faiblesse, `CarteKo` qui tombe avec tampon « KO ! »,
+  `BandeauTour`), `JaugeEnergie` (aperçu du coût qui clignote, « +X ⚡ » qui s'envole), `CinematiqueUltime`.
+- Écran de combat (refonte) : score « Toi X – Y Bot » + bandeau de tour, cartes actives face à face au centre
+  avec type et faiblesse, bancs avec PV, actions écrites en clair, fiche Supporter/Objet avant de la jouer,
+  tout l'écran tremble à l'impact d'un Ultime.
 - Le deck et les statistiques (victoires, niveaux battus) sont sauvegardés dans `JoueurContexte`.
 - Simplifications v1 : Impa choisit automatiquement (ton combattant le plus en forme / la carte adverse la
   plus faible) ; l'échange gratuit après l'attaque de Revali n'est pas codé.

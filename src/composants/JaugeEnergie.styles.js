@@ -9,23 +9,39 @@ const styles = StyleSheet.create({
   },
   nombre: {
     fontFamily: polices.titre,
-    fontSize: 15,
+    fontSize: 17,
     color: couleurs.texte,
-    width: 20,
+    minWidth: 22,
+  },
+  nombreCompact: {
+    fontSize: 13,
+    minWidth: 16,
   },
   cases: {
     flex: 1,
     flexDirection: 'row',
-    gap: 2,
+    gap: 3,
   },
   case: {
     flex: 1,
-    height: 10,
-    borderRadius: 3,
-    backgroundColor: 'rgba(23,30,51,0.12)',
+    height: 14,
+    borderRadius: 4,
+    backgroundColor: 'rgba(23,30,51,0.1)',
+  },
+  caseCompacte: {
+    height: 7,
+    borderRadius: 2,
   },
   casePleine: {
     backgroundColor: '#F5A524',
+  },
+  gain: {
+    position: 'absolute',
+    right: 0,
+    top: -6,
+    fontFamily: polices.titre,
+    fontSize: 14,
+    color: '#B5700A',
   },
 })
 

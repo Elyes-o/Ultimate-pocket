@@ -4,110 +4,106 @@ import { couleurs, espaces, rayons, polices, tailles, ombre, RATIO_CARTE } from 
 const styles = StyleSheet.create({
   ecran: {
     flex: 1,
+    backgroundColor: '#EEF0F8',
   },
 
-  // Barre du haut
+  // Score et tour
   barreHaut: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: espaces.l,
-    marginBottom: espaces.s,
   },
   boutonQuitter: {
-    width: 36,
-    height: 36,
+    width: 34,
+    height: 34,
     borderRadius: rayons.rond,
     backgroundColor: couleurs.surface,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  titreBarre: {
+  score: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: espaces.s,
+  },
+  nomScore: {
+    fontFamily: polices.tresGrasse,
+    fontSize: 13,
+    color: couleurs.texteSecondaire,
+  },
+  chiffreScore: {
     fontFamily: polices.titre,
-    fontSize: tailles.moyenne,
+    fontSize: tailles.grande,
     color: couleurs.texte,
   },
   tour: {
     fontFamily: polices.tresGrasse,
-    fontSize: 13,
-    color: couleurs.texteSecondaire,
-    width: 56,
-    textAlign: 'right',
-  },
-
-  // Une moitié du terrain
-  zoneCamp: {
-    flexDirection: 'row',
-    gap: espaces.m,
-    marginHorizontal: espaces.l,
-    padding: espaces.s,
-    borderRadius: rayons.grand,
-    backgroundColor: 'rgba(255,255,255,0.7)',
-  },
-  zoneCampJoueur: {
-    borderWidth: 2,
-    borderColor: couleurs.principaleClaire,
-  },
-  colonneInfos: {
-    flex: 1,
-    gap: 6,
-  },
-  ligneNom: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  nomCamp: {
-    flex: 1,
-    fontFamily: polices.titre,
-    fontSize: tailles.moyenne,
-    color: couleurs.texte,
-  },
-  sousNom: {
-    fontFamily: polices.grasse,
     fontSize: 12,
     color: couleurs.texteSecondaire,
-    marginTop: -6,
+    width: 50,
+    textAlign: 'right',
   },
-  pastillesKo: {
+  regleScore: {
+    fontFamily: polices.normale,
+    fontSize: 11,
+    color: couleurs.texteSecondaire,
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+
+  // Arène
+  arene: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 6,
+    paddingBottom: 6,
+  },
+  ligneBot: {
     flexDirection: 'row',
-    gap: 3,
+    alignItems: 'center',
+    gap: espaces.m,
   },
-  pastilleKo: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    borderWidth: 2,
-    borderColor: '#E2483D',
-  },
-  pastilleKoPleine: {
-    backgroundColor: '#E2483D',
+  energieBot: {
+    width: 96,
   },
   banc: {
     flexDirection: 'row',
     gap: 6,
+    minHeight: 66,
   },
-
-  // Message du milieu
-  milieu: {
-    flex: 1,
-    minHeight: 30,
-    justifyContent: 'center',
-    paddingHorizontal: espaces.xl,
+  placeActive: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: espaces.m,
+  },
+  etiquetteActif: {
+    width: 120,
+  },
+  nomActif: {
+    fontFamily: polices.titre,
+    fontSize: tailles.moyenne,
+    color: couleurs.texte,
+  },
+  typeActif: {
+    fontFamily: polices.grasse,
+    fontSize: 11,
+    color: couleurs.texteSecondaire,
   },
   message: {
     fontFamily: polices.grasse,
-    fontSize: 14,
+    fontSize: 13,
     color: couleurs.texte,
     textAlign: 'center',
+    paddingHorizontal: espaces.xl,
   },
 
   // Panneau d'actions
   panneau: {
-    marginTop: espaces.s,
     paddingHorizontal: espaces.l,
     paddingTop: espaces.m,
-    gap: 6,
+    gap: 8,
     backgroundColor: couleurs.surface,
     borderTopLeftRadius: rayons.enorme,
     borderTopRightRadius: rayons.enorme,
@@ -124,107 +120,122 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: espaces.s,
-    height: 40,
-    paddingHorizontal: espaces.l,
+    minHeight: 44,
+    paddingHorizontal: espaces.m,
     borderRadius: rayons.moyen,
   },
-  texteUltime: {
+  ultimePret: {
+    backgroundColor: '#F5A524',
+  },
+  ultimeEnCharge: {
+    backgroundColor: '#FFF4E0',
+  },
+  infosUltime: {
     flex: 1,
+  },
+  texteUltime: {
     fontFamily: polices.titre,
     fontSize: 14,
     color: '#FFFFFF',
+  },
+  detailUltime: {
+    fontFamily: polices.grasse,
+    fontSize: 11,
+    color: '#FFFFFF',
+  },
+  texteUltimeEnCharge: {
+    color: '#8A5A08',
   },
   coutUltime: {
     fontFamily: polices.titre,
     fontSize: 14,
     color: '#FFFFFF',
   },
-  boutonAttaque: {
+  grilleAttaques: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: espaces.m,
-    minHeight: 42,
-    paddingHorizontal: espaces.m,
+    gap: 8,
+  },
+  boutonAttaque: {
+    flex: 1,
+    padding: 8,
     borderRadius: rayons.moyen,
     backgroundColor: couleurs.principaleClaire,
+    borderWidth: 1.5,
+    borderColor: '#D6D1FF',
+    gap: 2,
   },
   boutonDesactive: {
     opacity: 0.4,
+  },
+  ligneAttaque: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  nomAttaque: {
+    flex: 1,
+    fontFamily: polices.tresGrasse,
+    fontSize: 13,
+    color: couleurs.texte,
   },
   cout: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 1,
-    paddingHorizontal: 8,
-    height: 26,
+    paddingHorizontal: 7,
+    height: 22,
     borderRadius: rayons.rond,
     backgroundColor: '#F5A524',
   },
   texteCout: {
     fontFamily: polices.titre,
-    fontSize: 14,
+    fontSize: 13,
     color: '#FFFFFF',
-  },
-  infosAttaque: {
-    flex: 1,
-    paddingVertical: 4,
-  },
-  nomAttaque: {
-    fontFamily: polices.tresGrasse,
-    fontSize: 15,
-    color: couleurs.texte,
-  },
-  effetsAttaque: {
-    fontFamily: polices.normale,
-    fontSize: 11,
-    color: couleurs.texteSecondaire,
   },
   degatsAttaque: {
     fontFamily: polices.titre,
     fontSize: tailles.grande,
     color: couleurs.principaleFoncee,
   },
+  effetsAttaque: {
+    fontFamily: polices.normale,
+    fontSize: 10,
+    color: couleurs.texteSecondaire,
+  },
   rangeeActions: {
     flexDirection: 'row',
-    gap: espaces.s,
+    gap: 6,
   },
   petiteAction: {
-    flexDirection: 'row',
+    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-    height: 44,
-    minWidth: 52,
-    paddingHorizontal: espaces.s,
+    paddingVertical: 6,
+    paddingHorizontal: 2,
     borderRadius: rayons.moyen,
     backgroundColor: couleurs.fond,
   },
   textePetiteAction: {
-    fontFamily: polices.titre,
-    fontSize: 14,
-    color: couleurs.principale,
+    fontFamily: polices.tresGrasse,
+    fontSize: 11,
+    color: couleurs.texte,
+    marginTop: 2,
   },
-  actionCarte: {
-    flex: 1,
-    justifyContent: 'flex-start',
-  },
-  vignette: {
-    width: 26,
-    height: 26 / RATIO_CARTE,
-    borderRadius: 3,
-  },
-  texteCarteAction: {
-    flex: 1,
+  detailPetiteAction: {
     fontFamily: polices.grasse,
     fontSize: 10,
-    color: couleurs.texte,
+    color: couleurs.texteSecondaire,
+  },
+  vignette: {
+    width: 14,
+    height: 14 / RATIO_CARTE,
+    borderRadius: 2,
   },
   boutonTalent: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
     paddingHorizontal: espaces.m,
-    paddingVertical: espaces.s,
+    paddingVertical: 7,
     borderRadius: rayons.moyen,
     backgroundColor: couleurs.principaleClaire,
   },
@@ -235,7 +246,7 @@ const styles = StyleSheet.create({
     color: couleurs.principaleFoncee,
   },
 
-  // Fenêtres (choix du banc, résultat)
+  // Fenêtres (fiche de carte, choix du banc, résultat)
   fondModal: {
     flex: 1,
     backgroundColor: 'rgba(10, 14, 30, 0.6)',
@@ -251,35 +262,61 @@ const styles = StyleSheet.create({
     padding: espaces.xl,
     alignItems: 'center',
   },
+  imageFiche: {
+    width: 150,
+    height: 150 / RATIO_CARTE,
+    borderRadius: 10,
+    marginBottom: espaces.m,
+  },
   titreFeuille: {
     fontFamily: polices.titre,
     fontSize: tailles.moyenne,
     color: couleurs.texte,
-    marginBottom: espaces.l,
+    marginBottom: espaces.s,
     textAlign: 'center',
+  },
+  texteFiche: {
+    fontFamily: polices.grasse,
+    fontSize: tailles.normale,
+    color: couleurs.texte,
+    textAlign: 'center',
+  },
+  regleFiche: {
+    fontFamily: polices.normale,
+    fontSize: 12,
+    color: couleurs.texteSecondaire,
+    textAlign: 'center',
+    marginTop: espaces.xs,
+    marginBottom: espaces.l,
   },
   choixBanc: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
     gap: espaces.m,
+    marginTop: espaces.s,
+  },
+  boutonPrincipal: {
+    width: '100%',
+    height: 50,
+    borderRadius: rayons.moyen,
+    backgroundColor: couleurs.principale,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  texteBoutonPrincipal: {
+    fontFamily: polices.tresGrasse,
+    fontSize: tailles.moyenne,
+    color: couleurs.texteInverse,
   },
   boutonAnnuler: {
     paddingVertical: espaces.m,
-    marginTop: espaces.s,
+    marginTop: espaces.xs,
   },
   texteAnnuler: {
     fontFamily: polices.grasse,
     fontSize: tailles.normale,
     color: couleurs.texteSecondaire,
-  },
-  feuilleResultat: {
-    width: '100%',
-    maxWidth: 420,
-    backgroundColor: couleurs.surface,
-    borderRadius: rayons.enorme,
-    padding: espaces.xl,
-    alignItems: 'center',
   },
   titreResultat: {
     fontFamily: polices.titre,
@@ -300,19 +337,6 @@ const styles = StyleSheet.create({
     fontFamily: polices.tresGrasse,
     fontSize: tailles.moyenne,
     color: couleurs.texte,
-  },
-  boutonRejouer: {
-    width: '100%',
-    height: 52,
-    borderRadius: rayons.moyen,
-    backgroundColor: couleurs.principale,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  texteRejouer: {
-    fontFamily: polices.tresGrasse,
-    fontSize: tailles.moyenne,
-    color: couleurs.texteInverse,
   },
 })
 

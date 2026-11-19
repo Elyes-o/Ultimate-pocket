@@ -293,12 +293,16 @@ function frapper(etat, idCamp, degatsDeBase, effets, nomAttaque) {
     (faiblesse ? ' (faiblesse !)' : '') +
     (degatsDeZone > 0 ? ' + zone sur le banc' : '')
 
+  // On garde une "photo" des cartes KO AVANT de les retirer : l'écran s'en sert pour l'animation de KO
   noterEvenement(etat, {
     type: 'attaque',
     attaquant: idCamp,
+    typeAttaquant: attaquant.type,
     degats: degatsSurActif,
     zone: effets.zone && degatsDeZone > 0,
     faiblesse,
+    koActif: cible.pv <= 0 ? copier(cible) : null,
+    koBanc: adversaire.banc.filter((combattant) => combattant.pv <= 0).map((combattant) => combattant.numero),
   })
 
   // KO ? (l'adversaire d'abord, puis l'attaquant à cause du recul)

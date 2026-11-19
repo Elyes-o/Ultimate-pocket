@@ -10,16 +10,24 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  voileRouge: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#E2483D',
+  },
+  onde: {
+    position: 'absolute',
+    borderWidth: 6,
+  },
   barreFond: {
-    height: 6,
-    borderRadius: 3,
+    height: 7,
+    borderRadius: 4,
     backgroundColor: 'rgba(23,30,51,0.12)',
     overflow: 'hidden',
     marginTop: 4,
   },
   barrePleine: {
     height: '100%',
-    borderRadius: 3,
+    borderRadius: 4,
   },
   ligneInfos: {
     flexDirection: 'row',
@@ -28,24 +36,24 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   textePv: {
-    fontFamily: polices.tresGrasse,
-    fontSize: 12,
+    fontFamily: polices.titre,
+    fontSize: 14,
     color: couleurs.texte,
+  },
+  textePvMax: {
+    fontFamily: polices.grasse,
+    fontSize: 11,
+    color: couleurs.texteSecondaire,
+  },
+  textePvPetit: {
+    fontFamily: polices.tresGrasse,
+    fontSize: 11,
+    color: couleurs.texte,
+    textAlign: 'center',
   },
   badges: {
     flexDirection: 'row',
     gap: 2,
-  },
-  degats: {
-    position: 'absolute',
-    top: '30%',
-    alignSelf: 'center',
-    fontFamily: polices.titre,
-    fontSize: 30,
-    color: '#E2483D',
-    textShadowColor: '#FFFFFF',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 8,
   },
 })
 
