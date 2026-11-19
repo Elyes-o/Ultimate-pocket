@@ -107,6 +107,11 @@ const styles = StyleSheet.create({
     fontSize: tailles.moyenne,
     color: couleurs.texte,
   },
+  styleNiveau: {
+    fontFamily: polices.normale,
+    fontSize: 12,
+    color: couleurs.texteSecondaire,
+  },
   ligneRecompense: {
     flexDirection: 'row',
     alignItems: 'center',

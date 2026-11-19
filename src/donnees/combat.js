@@ -106,7 +106,7 @@ export const fichesCombattants = {
     type: 'metal', pv: 250, faiblesse: 'tenebres', retraite: 5,
     attaques: [
       { nom: 'Module Cinétis', cout: 1, degats: 30, effets: { bloque: true } },
-      { nom: 'Colère des Prodiges', cout: 3, degats: 180, effets: { bonusParProdige: 40, fatigue: true } },
+      { nom: 'Colère des Prodiges', cout: 3, degats: 180, effets: { bonusParProdige: 20, fatigue: true } },
     ],
   },
 }
@@ -154,21 +154,103 @@ export const combos = [
     zone: 50,
     disponible: true,
   },
+  {
+    id: 'zora',
+    nom: 'Fratrie Zora',
+    ultime: 'Vague des Zoras',
+    groupes: [[6], [10]],
+    cout: 7,
+    degats: 120,
+    effets: { soinActif: 60 },
+    disponible: true,
+  },
+  {
+    id: 'gerudo',
+    nom: 'Peuple Gerudo',
+    ultime: 'Foudre du Désert',
+    groupes: [[9], [13]],
+    cout: 8,
+    degats: 140,
+    effets: { energieAdverse: 3 },
+    disponible: true,
+  },
+  {
+    id: 'piafs',
+    nom: 'Ailes Piafs',
+    ultime: 'Tempête de Plumes',
+    groupes: [[8], [12]],
+    cout: 7,
+    degats: 140,
+    effets: { ignoreBouclier: true },
+    disponible: true,
+  },
+  {
+    id: 'goron',
+    nom: 'Fierté Goron',
+    ultime: 'Roulade Titanesque',
+    groupes: [[7], [11]],
+    cout: 7,
+    degats: 130,
+    effets: { protectionTotale: true },
+    disponible: true,
+  },
+  {
+    id: 'lame',
+    nom: 'Lame purificatrice',
+    ultime: 'Lame Purificatrice',
+    groupes: [[1, 23]],
+    objet: 22,
+    cout: 8,
+    degats: 220,
+    effets: { ignoreBouclier: true },
+    disponible: true,
+  },
+  {
+    id: 'horde',
+    nom: 'Horde de la Calamité',
+    ultime: 'Assaut de la Horde',
+    groupes: [[16], [17], [18]],
+    cout: 8,
+    degats: 60,
+    zone: 60,
+    disponible: true,
+  },
 ]
 
+// Texte court d'un Ultime (pour l'affichage)
+export function texteUltime(combo) {
+  const morceaux = [combo.degats + ' dégâts']
+  if (combo.zone) morceaux.push('zone ' + combo.zone)
+  if (combo.effets && combo.effets.soinActif) morceaux.push('soin ' + combo.effets.soinActif)
+  if (combo.effets && combo.effets.energieAdverse) morceaux.push('-' + combo.effets.energieAdverse + ' ⚡ adverse')
+  if (combo.effets && combo.effets.ignoreBouclier) morceaux.push('perce boucliers')
+  if (combo.effets && combo.effets.protectionTotale) morceaux.push('invincible 1 tour')
+  return morceaux.join(' · ')
+}
+
 // Decks des bots (numéros de cartes)
+// Le 1er combattant commence en actif.
 export const decksBots = {
   facile: { combattants: [16, 17, 14, 19, 1], supporter: 15, objet: 20 },
   normal: { combattants: [12, 13, 10, 11, 18], supporter: 3, objet: 21 },
+  // Difficile : combos Fierté Goron (Daruk + Yunobo) et Ailes Piafs (Revali + Teba), avec Lynel
+  difficile: { combattants: [7, 11, 18, 12, 8], supporter: 4, objet: 20 },
+  // Légendaire : combos Fratrie Zora (Mipha + Sidon) et Peuple Gerudo (Urbosa + Riju)
+  legendaire: { combattants: [10, 6, 13, 9, 18], supporter: 3, objet: 22 },
+  // Ultime : Prodiges + Héros d'Hyrule + Lame purificatrice, et démarre avec plus d'Énergie
+  ultime: { combattants: [7, 8, 9, 6, 23], supporter: 2, objet: 22 },
 }
+
+// Énergie de départ des bots (5 pour le boss Ultime, 3 sinon)
+export const energieDepartBots = { ultime: 5 }
 
 // Niveaux de bot affichés dans le menu Combat
 export const niveauxBot = [
-  { id: 'facile', nom: 'Facile', recompense: 20, disponible: true },
-  { id: 'normal', nom: 'Normal', recompense: 40, disponible: true },
-  { id: 'difficile', nom: 'Difficile', recompense: 80, disponible: false },
-  { id: 'legendaire', nom: 'Légendaire', recompense: 120, disponible: false },
-  { id: 'ultime', nom: 'Ultime', recompense: 200, disponible: false },
+  { id: 'facile', nom: 'Facile', recompense: 20, disponible: true, style: 'Joue au hasard' },
+  { id: 'normal', nom: 'Normal', recompense: 40, disponible: true, style: 'Frappe toujours fort' },
+  { id: 'difficile', nom: 'Difficile', recompense: 80, disponible: true, style: 'Économise pour ses Ultimes' },
+  { id: 'legendaire', nom: 'Légendaire', recompense: 120, disponible: true, style: 'Deux combos, vise tes combos' },
+  { id: 'ultime', nom: 'Ultime', recompense: 200, disponible: true, style: 'Boss : démarre à 5 ⚡' },
 ]
 
 export const RECOMPENSE_DEFAITE = 5

@@ -81,6 +81,7 @@ export default function EcranCombat() {
             </View>
             <View style={styles.infosNiveau}>
               <Text style={styles.nomNiveau}>Bot {niveau.nom}</Text>
+              <Text style={styles.styleNiveau}>{niveau.style}</Text>
               <View style={styles.ligneRecompense}>
                 <IconeEclat taille={14} />
                 <Text style={styles.texteRecompense}>+{niveau.recompense}</Text>

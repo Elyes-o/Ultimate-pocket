@@ -61,7 +61,14 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
 - `src/donnees/combat.js` : fiches de combat, Supporters/Objets, combos (`disponible: true` = jouable), decks des bots, niveaux.
 - `src/combat/moteur.js` : TOUTES les règles, sans affichage. `jouerAction(etat, camp, action)` renvoie un nouvel état.
   `etat.evenement` (avec un `id` qui augmente) sert à déclencher les animations.
-- `src/combat/bot.js` : cerveau des bots Facile et Normal (`choisirActionsDuBot`).
+- `src/combat/bot.js` : cerveaux des 5 bots. `prochaineActionDuBot` donne UNE action ; on la redemande après
+  chaque action gratuite (Impa change l'actif !). Facile = hasard ; Normal = plus grosse attaque ;
+  Difficile/Légendaire/Ultime = achève, lance l'Ultime, économise pour l'Ultime, casse tes combos (zone),
+  joue Supporter/Objet/Talent au bon moment. Le moteur transforme une attaque impossible en concentration.
+- Decks des bots : Difficile = Goron + Piafs + Lynel ; Légendaire = Zora + Gerudo ; Ultime = Prodiges + Héros
+  + Lame, démarre à 5 Énergie (`energieDepartBots`). Les 8 combos de CARTES_COMBAT.md sont jouables.
+- Difficulté mesurée (simulation de 2 000 parties par niveau contre un joueur « Normal » au deck aléatoire) :
+  le bot gagne 18 % / 74 % / 82 % / 85 % / 92 % (Facile → Ultime).
 - Écrans : `app/(onglets)/combat.jsx` (deck + bots), `app/deck.jsx`, `app/partie.jsx` (le combat).
 - Composants : `CarteCombat` (entrée, élan, onde de choc colorée par type, voile rouge, PV qui descendent
   doucement), `EffetsCombat` (`DegatsFlottants` + badge Faiblesse, `CarteKo` qui tombe avec tampon « KO ! »,
@@ -72,7 +79,7 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
 - Le deck et les statistiques (victoires, niveaux battus) sont sauvegardés dans `JoueurContexte`.
 - Simplifications v1 : Impa choisit automatiquement (ton combattant le plus en forme / la carte adverse la
   plus faible) ; l'échange gratuit après l'attaque de Revali n'est pas codé.
-- À équilibrer : Link (Prodige) avec les 4 Prodiges au banc fait 340 dégâts (one-shot).
+- Rééquilibrage : Colère des Prodiges de Link (Prodige) = +20 par Prodige (au lieu de +40), max 260.
 
 ## Règles de jeu connues (cartes)
 - Format de carte type Pokémon : PV, attaque(s), type, faiblesse, coût de retraite, plus une ENDURANCE.

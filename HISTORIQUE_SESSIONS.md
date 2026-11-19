@@ -60,5 +60,10 @@
 - Profil : avatar et pseudo modifiables, statistiques, bots battus, meilleure carte, carte favorite, paramètres,
   bouton « Recommencer la partie ».
 
+## Session du 2026-11-19 — bots Difficile, Légendaire et Ultime
+- 3 nouveaux bots « intelligents » (économisent pour l'Ultime, cassent les combos, achèvent), les 8 combos jouables.
+- Link (Prodige) rééquilibré (+20 par Prodige). Difficulté vérifiée par simulation (10 000 parties).
+- Bug corrigé : le bot planifiait une attaque avant de jouer Impa (qui change l'actif) → une action à la fois.
+
 ## Règle de mise à jour
 À chaque nouvelle session : ajouter une section datée ici, puis mettre à jour `CLAUDE.md` si une décision change.

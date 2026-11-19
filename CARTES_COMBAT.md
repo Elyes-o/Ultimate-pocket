@@ -31,7 +31,7 @@ Coût d'une attaque = nombre de symboles = Énergie dépensée. Règles complèt
 | 7 | Daruk | 3 | Combat | 150 | Plante | 3 | **Écrasement Goron** (3) → 130 : Recul 20 · Talent **Bouclier de Daruk** : la prochaine attaque adverse fait 0 dégât |
 | 8 | Revali | 3 | Incolore | 150 | Électrique | 3 | **Bourrasque de l'Arc de l'Aigle** (2) → 60 : puis tu peux échanger Revali avec ton banc gratuitement · Talent **Rage de Revali** : retraite gratuite ce tour |
 | 9 | Urbosa | 3 | Électrique | 130 | Combat | 3 | **Brise-Roc Cimeterre** (1) → 50 : ignore les Boucliers · **Colère d'Urbosa** (3) → 120 : Zone 30 |
-| 23 | Link (Prodige) | 4 | Métal | 250 | Ténèbres | 5 | **Module Cinétis** (1) → 30 : Bloqué · **Colère des Prodiges** (3) → 180 : +40 par Prodige sur ton banc ; Link ne peut pas attaquer au tour suivant |
+| 23 | Link (Prodige) | 4 | Métal | 250 | Ténèbres | 5 | **Module Cinétis** (1) → 30 : Bloqué · **Colère des Prodiges** (3) → 180 : +20 par Prodige sur ton banc (rééquilibré, était +40) ; Link ne peut pas attaquer au tour suivant |
 
 ## Supporters (5) — 1 par deck, 1 fois par combat, gratuit
 
@@ -67,7 +67,7 @@ Conditions : toutes les cartes du combo sont dans ton deck, **aucune n'est KO**,
 | Lame purificatrice | Link ou Link (Prodige) + Master Sword (Objet) | 8 | Lame Purificatrice | 220, ignore Boucliers. Master Sword est utilisée. |
 | Horde de la Calamité | Bokoblin + Hinox + Lynel | 8 | Assaut de la Horde | 60 à TOUTES les cartes adverses (actif + banc). |
 
-⭐ v1 = combos codés dans la première version du combat ; les autres arrivent ensuite.
+Les 8 combos sont jouables (⭐ = codés dès la v1, les 6 autres ajoutés avec les bots Difficile à Ultime).
 
 ## Notes d'équilibrage (à ajuster après les premières parties)
 - Départ 3 Énergie, +2/tour : une attaque à 2 tout de suite, une à 3-4 au tour 2, un Ultime vers le tour 3-4

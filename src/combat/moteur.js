@@ -43,11 +43,11 @@ function creerCombattant(numero) {
   }
 }
 
-function creerCamp(nom, deck) {
+function creerCamp(nom, deck, energieDepart) {
   const combattants = deck.combattants.map(creerCombattant)
   return {
     nom,
-    energie: ENERGIE_DEPART,
+    energie: energieDepart,
     ko: 0,
     actif: combattants[0],
     banc: combattants.slice(1),
@@ -60,11 +60,12 @@ function creerCamp(nom, deck) {
 }
 
 // Crée un combat. Le premier joueur est tiré au hasard.
-export function creerCombat(deckJoueur, deckBot, nomBot) {
+// "energieBot" : Énergie de départ du bot (le boss Ultime démarre plus haut).
+export function creerCombat(deckJoueur, deckBot, nomBot, energieBot = ENERGIE_DEPART) {
   return {
     camps: {
-      joueur: creerCamp('Toi', deckJoueur),
-      bot: creerCamp(nomBot, deckBot),
+      joueur: creerCamp('Toi', deckJoueur, ENERGIE_DEPART),
+      bot: creerCamp(nomBot, deckBot, energieBot),
     },
     tour: Math.random() < 0.5 ? 'joueur' : 'bot',
     numeroTour: 1,
@@ -281,6 +282,9 @@ function frapper(etat, idCamp, degatsDeBase, effets, nomAttaque) {
   if (effets.fatigue) {
     attaquant.fatigue = true
   }
+  if (effets.protectionTotale) {
+    attaquant.annuleProchaineAttaque = true
+  }
   if (effets.soinBanc && camp.banc.length > 0) {
     soignerLePlusBlesse(camp.banc, effets.soinBanc)
   }
@@ -344,7 +348,7 @@ function lancerUltime(etat, idCamp, idCombo) {
   if (combo.objet) {
     camp.objet.utilise = true
   }
-  frapper(etat, idCamp, combo.degats, { zone: combo.zone }, combo.ultime)
+  frapper(etat, idCamp, combo.degats, { zone: combo.zone, ...combo.effets }, combo.ultime)
   if (etat.evenement) {
     etat.evenement.ultime = combo.id
   }
@@ -480,6 +484,14 @@ export function jouerAction(etatActuel, idCamp, action) {
   if (action.type === 'talent') {
     utiliserTalent(etat, idCamp)
     return etat
+  }
+
+  // Filet de sécurité : une attaque impossible (mauvais numéro, pas assez d'Énergie) devient une concentration
+  if (action.type === 'attaque') {
+    const attaquePossible = actionsPossibles(etat, idCamp).attaques.find((element) => element.index === action.index)
+    if (!attaquePossible || !attaquePossible.possible) {
+      action = { type: 'concentration' }
+    }
   }
 
   if (action.type === 'attaque') {

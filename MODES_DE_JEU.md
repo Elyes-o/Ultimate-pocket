@@ -52,9 +52,10 @@
 
 - **+1 Ticket** pour la première victoire du jour. **+5 Éclats** en cas de défaite.
 
-### Première version du combat (v1)
-Écran Deck (5 combattants + 1 Supporter + 1 Objet parmi les cartes possédées) ; combat contre le bot
-Facile et Normal ; 2 combos (Link + Zelda, Prodiges) ; animations simples + 1 cinématique d'Ultime ; récompenses.
+### État actuel du combat
+Écran Deck (5 combattants + 1 Supporter + 1 Objet parmi les cartes possédées) ; combat contre les 5 bots
+(à débloquer dans l'ordre) ; les 8 combos jouables ; animations + cinématique d'Ultime ; récompenses.
+Le badge du bot Ultime n'est pas encore fait (seulement la médaille dans le Profil).
 
 ## À définir plus tard
 - Équilibrage des chiffres après les premières parties.

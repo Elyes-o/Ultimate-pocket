@@ -12,8 +12,8 @@ import CinematiqueUltime from '../src/composants/CinematiqueUltime'
 import IconeEclat from '../src/composants/IconeEclat'
 import { DegatsFlottants, CarteKo, BandeauTour } from '../src/composants/EffetsCombat'
 import { creerCombat, jouerAction, actionsPossibles } from '../src/combat/moteur'
-import { choisirActionsDuBot } from '../src/combat/bot'
-import { decksBots, niveauxBot, fichesSupporters, fichesObjets, combos, nomsTypes } from '../src/donnees/combat'
+import { prochaineActionDuBot } from '../src/combat/bot'
+import { decksBots, energieDepartBots, niveauxBot, fichesSupporters, fichesObjets, combos, nomsTypes, texteUltime } from '../src/donnees/combat'
 import { trouverCarte } from '../src/donnees/cartes'
 import { useJoueur } from '../src/donnees/JoueurContexte'
 import { couleurs } from '../src/theme'
@@ -113,7 +113,7 @@ export default function EcranPartie() {
   const { deckDeCombat, recompenserCombat } = useJoueur()
 
   function nouveauCombat() {
-    return creerCombat(deckDeCombat(), decksBots[niveau.id], 'Bot ' + niveau.nom)
+    return creerCombat(deckDeCombat(), decksBots[niveau.id], 'Bot ' + niveau.nom, energieDepartBots[niveau.id])
   }
 
   const [etat, setEtat] = useState(nouveauCombat)
@@ -129,27 +129,22 @@ export default function EcranPartie() {
   const campJoueur = etat.camps.joueur
   const campBot = etat.camps.bot
 
-  // ----- Tour du bot -----
+  // ----- Tour du bot : UNE action à la fois -----
+  // Après une action gratuite (Supporter, Objet, Talent), c'est toujours au bot :
+  // ce même effet se relance avec le nouvel état et le bot choisit sa prochaine action.
   useEffect(() => {
     if (etat.tour !== 'bot' || etat.gagnant || etat.remplacementEnAttente || cinematique) {
       return
     }
     const minuteur = setTimeout(() => {
-      let nouvelEtat = etat
-      for (const action of choisirActionsDuBot(etat, niveau.id)) {
-        if (action.type === 'ultime') {
-          // L'Ultime passe d'abord par sa cinématique
-          const combo = combos.find((element) => element.id === action.idCombo)
-          setEtat(nouvelEtat)
-          setCinematique({ combo, camp: 'bot', numeros: numerosDuCombo(nouvelEtat.camps.bot, combo) })
-          return
-        }
-        nouvelEtat = jouerAction(nouvelEtat, 'bot', action)
-        if (nouvelEtat.gagnant || nouvelEtat.remplacementEnAttente) {
-          break
-        }
+      const action = prochaineActionDuBot(etat, niveau.id)
+      if (action.type === 'ultime') {
+        // L'Ultime passe d'abord par sa cinématique
+        const combo = combos.find((element) => element.id === action.idCombo)
+        setCinematique({ combo, camp: 'bot', numeros: numerosDuCombo(etat.camps.bot, combo) })
+        return
       }
-      setEtat(nouvelEtat)
+      setEtat(jouerAction(etat, 'bot', action))
     }, DELAI_BOT)
     return () => clearTimeout(minuteur)
   }, [etat, cinematique])
@@ -279,7 +274,7 @@ export default function EcranPartie() {
                 <View style={styles.infosUltime}>
                   <Text style={[styles.texteUltime, !possible && styles.texteUltimeEnCharge]}>Ultime · {combo.ultime}</Text>
                   <Text style={[styles.detailUltime, !possible && styles.texteUltimeEnCharge]}>
-                    {combo.degats} dégâts{combo.zone ? ' + zone ' + combo.zone : ''}
+                    {texteUltime(combo)}
                   </Text>
                 </View>
                 <Text style={[styles.coutUltime, !possible && styles.texteUltimeEnCharge]}>
