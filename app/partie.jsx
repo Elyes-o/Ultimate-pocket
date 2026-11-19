@@ -175,7 +175,10 @@ export default function EcranPartie() {
     if (etat.gagnant && !recompenseDonnee.current) {
       recompenseDonnee.current = true
       // On laisse le temps de voir le dernier coup et le KO
-      setTimeout(() => setRecompense(recompenserCombat(etat.gagnant === 'joueur', niveau.id)), 1500)
+      // Les cartes de ton deck comptent comme "jouées" (pour la carte favorite du Profil)
+      const deckJoue = deckDeCombat()
+      const numerosJoues = [...deckJoue.combattants, deckJoue.supporter, deckJoue.objet]
+      setTimeout(() => setRecompense(recompenserCombat(etat.gagnant === 'joueur', niveau.id, numerosJoues)), 1500)
     }
   }, [etat.gagnant])
 

@@ -155,6 +155,15 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
 - Les pubs sont SIMULÉES (`FenetrePub`, 5 s). À remplacer par une vraie pub récompensée (ex. AdMob) plus tard.
 - `ConfirmationAchat` : fenêtre d'achat partagée accueil + boutique. L'ouverture reçoit `/ouverture?booster=<id>`.
 
+## Profil (2026-11-19)
+- `app/profil.jsx` : avatar (carte possédée recadrée sur le dessin, ou initiale) et pseudo modifiables (16 car. max),
+  victoires / défaites / taux, bots battus, meilleure carte (la plus rare puis le plus de PV), carte favorite
+  (la plus jouée en combat), paramètres Son / Vibrations (enregistrés, pas encore de sons), Langue (Français),
+  Se déconnecter (→ login factice), Recommencer la partie (confirmation, efface tout).
+- `AvatarJoueur` : composant réutilisé dans le bandeau du haut.
+- `JoueurContexte` : `partieDeDepart()` = UNE seule définition de la partie neuve (1er lancement, vieilles
+  sauvegardes complétées, bouton Recommencer). `statistiques.cartesJouees` compte les cartes du deck à chaque combat.
+
 ## Sauvegarde (v1.2, 2026-11-19)
 - `JoueurContexte` sauvegarde Éclats, Tickets, minuteur du booster, cartes possédées et compteurs de pubs avec
   **AsyncStorage** (clé `ultimate-pocket:joueur`), à chaque changement. Relue au démarrage.

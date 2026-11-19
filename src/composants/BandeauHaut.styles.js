@@ -15,21 +15,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: espaces.s,
   },
-  avatar: {
-    width: 42,
-    height: 42,
-    borderRadius: rayons.rond,
-    backgroundColor: couleurs.principale,
-    borderWidth: 3,
-    borderColor: couleurs.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  initiale: {
-    fontFamily: polices.titre,
-    fontSize: tailles.moyenne,
-    color: couleurs.texteInverse,
-  },
   pseudo: {
     fontFamily: polices.tresGrasse,
     fontSize: tailles.normale,

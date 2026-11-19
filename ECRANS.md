@@ -22,11 +22,10 @@ Affiché au lancement de l'app : logo, barre de progression, astuce qui change.
 
 ## 4. Profil
 Ouvert en cliquant sur l'icône de profil.
-- Paramètres classiques (compte, son, langue, etc.).
-- Nombre de **victoires** et de **défaites**.
-- **Meilleure carte**.
-- **Carte favorite** (la plus jouée).
-- Autres statistiques possibles ("etc." : à préciser plus tard).
+- **Avatar** (une carte possédée, recadrée sur le dessin) et **pseudo** modifiables.
+- **Victoires**, **défaites**, taux de victoire, **bots battus** (médailles).
+- **Meilleure carte** (la plus rare) et **carte favorite** (la plus jouée en combat).
+- Paramètres : son, vibrations, langue, se déconnecter, recommencer la partie (avec confirmation).
 
 ## 5. Barre de navigation (en bas)
 | Onglet | Rôle |

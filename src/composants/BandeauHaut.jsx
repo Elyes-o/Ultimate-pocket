@@ -5,6 +5,7 @@ import { router } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import IconeEclat from './IconeEclat'
+import AvatarJoueur from './AvatarJoueur'
 import { useJoueur } from '../donnees/JoueurContexte'
 import { couleurs } from '../theme'
 import styles from './BandeauHaut.styles'
@@ -16,9 +17,7 @@ export default function BandeauHaut() {
   return (
     <View style={[styles.bandeau, { paddingTop: marges.top + 10 }]}>
       <Pressable style={styles.profil} onPress={() => router.push('/profil')}>
-        <View style={styles.avatar}>
-          <Text style={styles.initiale}>{pseudo[0]}</Text>
-        </View>
+        <AvatarJoueur taille={42} />
         <View>
           <Text style={styles.pseudo}>{pseudo}</Text>
           <Text style={styles.lienProfil}>Voir le profil</Text>

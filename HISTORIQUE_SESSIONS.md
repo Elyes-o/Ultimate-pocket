@@ -55,5 +55,10 @@
 - Combat v1 codé : écran Deck, combat contre bot Facile et Normal, combos Héros d'Hyrule et Prodiges
   avec cinématique, animations d'attaque, récompenses et déblocage des niveaux.
 
+## Session du 2026-11-19 — refonte du combat et Profil
+- Écran de combat refait (cartes face à face, score, bandeau de tour, actions claires) + nouvelles animations.
+- Profil : avatar et pseudo modifiables, statistiques, bots battus, meilleure carte, carte favorite, paramètres,
+  bouton « Recommencer la partie ».
+
 ## Règle de mise à jour
 À chaque nouvelle session : ajouter une section datée ici, puis mettre à jour `CLAUDE.md` si une décision change.
