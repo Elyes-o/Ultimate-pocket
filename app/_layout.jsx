@@ -38,6 +38,8 @@ export default function MiseEnPageRacine() {
             <Stack.Screen name="(onglets)" options={{ animation: 'fade' }} />
             <Stack.Screen name="profil" options={{ animation: 'slide_from_right' }} />
             <Stack.Screen name="ouverture" options={{ animation: 'fade', presentation: 'fullScreenModal', gestureEnabled: false }} />
+            <Stack.Screen name="deck" options={{ animation: 'slide_from_right' }} />
+            <Stack.Screen name="partie" options={{ animation: 'fade', gestureEnabled: false }} />
           </Stack>
         </View>
       </View>

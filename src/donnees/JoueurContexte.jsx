@@ -4,6 +4,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { cartesZelda } from './cartes'
+import { categorieCarte, niveauxBot, RECOMPENSE_DEFAITE } from './combat'
 
 // Nom sous lequel la partie est rangée dans le stockage
 const CLE_SAUVEGARDE = 'ultimate-pocket:joueur'
@@ -34,6 +35,10 @@ export function JoueurFournisseur({ children }) {
   const [pubsParBooster, setPubsParBooster] = useState({})
   // Pubs "Ticket" regardées aujourd'hui, ex. { jour: '2026-11-19', nombre: 3 }
   const [pubsTicketsDuJour, setPubsTicketsDuJour] = useState({ jour: dateDuJour(), nombre: 0 })
+  // Deck de combat choisi par le joueur : { combattants: [5 numéros], supporter, objet } (null = deck automatique)
+  const [deck, setDeck] = useState(null)
+  // Statistiques de combat (serviront aussi au Profil)
+  const [statistiques, setStatistiques] = useState({ victoires: 0, defaites: 0, niveauxBattus: [], jourDerniereVictoire: null })
   // Passe à true quand la sauvegarde a été lue (ou qu'il n'y en avait pas)
   const [donneesChargees, setDonneesChargees] = useState(false)
 
@@ -51,6 +56,8 @@ export function JoueurFournisseur({ children }) {
           // "??" : valeur par défaut si la sauvegarde date d'une ancienne version du jeu
           setPubsParBooster(partie.pubsParBooster ?? {})
           setPubsTicketsDuJour(partie.pubsTicketsDuJour ?? { jour: dateDuJour(), nombre: 0 })
+          setDeck(partie.deck ?? null)
+          setStatistiques(partie.statistiques ?? { victoires: 0, defaites: 0, niveauxBattus: [], jourDerniereVictoire: null })
         }
       } catch (erreur) {
         // Sauvegarde illisible : on garde la partie de départ plutôt que de bloquer le jeu
@@ -67,11 +74,11 @@ export function JoueurFournisseur({ children }) {
     if (!donneesChargees) {
       return
     }
-    const partie = { eclats, tickets, boosterPretA, cartesPossedees, pubsParBooster, pubsTicketsDuJour }
+    const partie = { eclats, tickets, boosterPretA, cartesPossedees, pubsParBooster, pubsTicketsDuJour, deck, statistiques }
     AsyncStorage.setItem(CLE_SAUVEGARDE, JSON.stringify(partie)).catch((erreur) =>
       console.warn('Impossible de sauvegarder la partie', erreur)
     )
-  }, [donneesChargees, eclats, tickets, boosterPretA, cartesPossedees, pubsParBooster, pubsTicketsDuJour])
+  }, [donneesChargees, eclats, tickets, boosterPretA, cartesPossedees, pubsParBooster, pubsTicketsDuJour, deck, statistiques])
 
   // Dépense un Ticket pour avancer le minuteur d'une heure
   function utiliserTicket() {
@@ -122,6 +129,49 @@ export function JoueurFournisseur({ children }) {
     setPubsParBooster({ ...pubsParBooster, [idBooster]: 0 })
   }
 
+  // Deck utilisé en combat : celui choisi par le joueur, sinon un deck automatique
+  // avec ses meilleures cartes possédées (null s'il n'a pas assez de cartes)
+  function deckDeCombat() {
+    if (deck) {
+      return deck
+    }
+    const possedees = cartesZelda.filter((carte) => cartesPossedees.includes(carte.numero))
+    const parRarete = possedees.slice().sort((a, b) => b.rarete - a.rarete)
+    const combattants = parRarete.filter((carte) => categorieCarte(carte.numero) === 'combattant').slice(0, 5)
+    const supporter = parRarete.find((carte) => categorieCarte(carte.numero) === 'supporter')
+    const objet = parRarete.find((carte) => categorieCarte(carte.numero) === 'objet')
+    if (combattants.length < 5 || !supporter || !objet) {
+      return null
+    }
+    return { combattants: combattants.map((carte) => carte.numero), supporter: supporter.numero, objet: objet.numero }
+  }
+
+  // Fin d'un combat contre un bot : donne la récompense et met à jour les statistiques.
+  // Renvoie ce qui a été gagné : { eclats, ticket }
+  function recompenserCombat(victoire, idNiveau) {
+    if (!victoire) {
+      setEclats(eclats + RECOMPENSE_DEFAITE)
+      setStatistiques({ ...statistiques, defaites: statistiques.defaites + 1 })
+      return { eclats: RECOMPENSE_DEFAITE, ticket: false }
+    }
+    const niveau = niveauxBot.find((element) => element.id === idNiveau)
+    const premiereVictoireDuJour = statistiques.jourDerniereVictoire !== dateDuJour()
+    setEclats(eclats + niveau.recompense)
+    if (premiereVictoireDuJour) {
+      setTickets(tickets + 1)
+    }
+    const niveauxBattus = statistiques.niveauxBattus.includes(idNiveau)
+      ? statistiques.niveauxBattus
+      : [...statistiques.niveauxBattus, idNiveau]
+    setStatistiques({
+      ...statistiques,
+      victoires: statistiques.victoires + 1,
+      niveauxBattus,
+      jourDerniereVictoire: dateDuJour(),
+    })
+    return { eclats: niveau.recompense, ticket: premiereVictoireDuJour }
+  }
+
   function possedeCarte(numero) {
     return cartesPossedees.includes(numero)
   }
@@ -151,6 +201,11 @@ export function JoueurFournisseur({ children }) {
     recompenserPubTicket,
     compterPubBooster,
     remettreAZeroPubsBooster,
+    deck,
+    setDeck,
+    deckDeCombat,
+    statistiques,
+    recompenserCombat,
   }
 
   return <JoueurContexte.Provider value={valeur}>{children}</JoueurContexte.Provider>

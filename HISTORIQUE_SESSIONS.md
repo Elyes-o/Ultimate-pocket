@@ -48,5 +48,12 @@
 - Boutique : Hyrule (100 Éclats ou 3 pubs), Hyrule Légendaire (300 Éclats uniquement), Tickets via pubs
   (5/jour), packs d'Éclats affichés « Bientôt ». Pubs simulées. Tous les chiffres sont provisoires.
 
+## Session du 2026-11-19 — grill et première version du combat
+- Grill des règles : jauge d'Énergie par joueur, Ultimes = combos de cartes (perdus si une carte est KO),
+  zone = seule façon de toucher le banc, premier à 3 KO, 5 niveaux de bot, récompenses en Éclats.
+- Fiche de combat des 23 cartes validée (`CARTES_COMBAT.md`).
+- Combat v1 codé : écran Deck, combat contre bot Facile et Normal, combos Héros d'Hyrule et Prodiges
+  avec cinématique, animations d'attaque, récompenses et déblocage des niveaux.
+
 ## Règle de mise à jour
 À chaque nouvelle session : ajouter une section datée ici, puis mettre à jour `CLAUDE.md` si une décision change.

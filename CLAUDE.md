@@ -46,6 +46,29 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
 | Collection | Choisir une collection : Hollow Knight, Zelda, One Piece (d'autres plus tard) |
 | Communauté | Ajouter des amis |
 
+## Combat (décidé au grill du 2026-11-19) — détail dans `MODES_DE_JEU.md`
+- Deck : 5 combattants (1 actif + 4 banc) + 1 Supporter + 1 Objet.
+- **Jauge d'Énergie par joueur** (0-10) : départ 3, +2 par tour, gardée, +1 quand on prend des dégâts.
+- 1 action par tour : attaquer (coût = symboles) / se concentrer (+2) / changer (coût de retraite).
+- Supporter et Objet : gratuits, en plus de l'action, 1 fois chacun par combat.
+- **Ultimes = combos de cartes** (Link+Zelda, Prodiges…), 7-10 Énergie, perdus si une carte du combo est KO.
+- Seules les attaques de zone touchent le banc. Premier à 3 KO gagne.
+- Bots : Facile, Normal, Difficile, Légendaire, Ultime (+20 à +200 Éclats).
+- Toutes les attaques animées ; mini-cinématique pour les Ultimes.
+- Fiche de chaque carte (attaques réécrites, combos) : `CARTES_COMBAT.md`.
+
+### Combat v1 codé (2026-11-19)
+- `src/donnees/combat.js` : fiches de combat, Supporters/Objets, combos (`disponible: true` = jouable), decks des bots, niveaux.
+- `src/combat/moteur.js` : TOUTES les règles, sans affichage. `jouerAction(etat, camp, action)` renvoie un nouvel état.
+  `etat.evenement` (avec un `id` qui augmente) sert à déclencher les animations.
+- `src/combat/bot.js` : cerveau des bots Facile et Normal (`choisirActionsDuBot`).
+- Écrans : `app/(onglets)/combat.jsx` (deck + bots), `app/deck.jsx`, `app/partie.jsx` (le combat).
+- Composants : `CarteCombat` (élan, secousse, dégâts qui s'envolent), `JaugeEnergie`, `CinematiqueUltime`.
+- Le deck et les statistiques (victoires, niveaux battus) sont sauvegardés dans `JoueurContexte`.
+- Simplifications v1 : Impa choisit automatiquement (ton combattant le plus en forme / la carte adverse la
+  plus faible) ; l'échange gratuit après l'attaque de Revali n'est pas codé.
+- À équilibrer : Link (Prodige) avec les 4 Prodiges au banc fait 340 dégâts (one-shot).
+
 ## Règles de jeu connues (cartes)
 - Format de carte type Pokémon : PV, attaque(s), type, faiblesse, coût de retraite, plus une ENDURANCE.
 - Jauge d'ultime et raids contre un boss.
