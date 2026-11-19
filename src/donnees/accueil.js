@@ -46,7 +46,20 @@ export const boosters = [
     visuel: require('../../assets/visuels/booster-hyrule.webp'),
     disponible: true,
     prixEclats: 100,
-    nombrePubs: 3, // provisoire : à décider
+    nombrePubs: 3, // provisoire : 3 pubs = 1 booster gratuit
+    tirage: 'normal',
+  },
+  {
+    id: 'zelda-legendaire',
+    nom: 'Hyrule Légendaire',
+    univers: 'Zelda · Chances de rares augmentées',
+    couleur: '#C98A12',
+    visuel: require('../../assets/visuels/booster-hyrule.webp'),
+    disponible: true,
+    legendaire: true, // affiche le ruban doré
+    prixEclats: 300, // provisoire
+    nombrePubs: null, // null = achetable UNIQUEMENT en Éclats (pas avec des pubs)
+    tirage: 'legendaire',
   },
   {
     id: 'one-piece',

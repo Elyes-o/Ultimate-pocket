@@ -5,13 +5,24 @@
 import { cartesZelda } from './cartes'
 
 // Chances (en %) d'obtenir chaque rareté (1 à 4 étoiles), emplacement par emplacement
-const chancesParEmplacement = [
-  { 1: 70, 2: 25, 3: 5, 4: 0 },
-  { 1: 70, 2: 25, 3: 5, 4: 0 },
-  { 1: 70, 2: 25, 3: 5, 4: 0 },
-  { 1: 0, 2: 60, 3: 35, 4: 5 },
-  { 1: 0, 2: 40, 3: 45, 4: 15 },
-]
+const tablesDeChances = {
+  // Booster classique
+  normal: [
+    { 1: 70, 2: 25, 3: 5, 4: 0 },
+    { 1: 70, 2: 25, 3: 5, 4: 0 },
+    { 1: 70, 2: 25, 3: 5, 4: 0 },
+    { 1: 0, 2: 60, 3: 35, 4: 5 },
+    { 1: 0, 2: 40, 3: 45, 4: 15 },
+  ],
+  // Booster Légendaire : au moins une carte 3★ garantie, 4★ bien plus fréquentes
+  legendaire: [
+    { 1: 50, 2: 35, 3: 15, 4: 0 },
+    { 1: 50, 2: 35, 3: 15, 4: 0 },
+    { 1: 50, 2: 35, 3: 15, 4: 0 },
+    { 1: 0, 2: 30, 3: 55, 4: 15 },
+    { 1: 0, 2: 0, 3: 60, 4: 40 },
+  ],
+}
 
 // Choisit une rareté au hasard selon les pourcentages donnés
 function tirerRarete(chances) {
@@ -33,10 +44,11 @@ function tirerCarteDeRarete(rarete) {
   return cartesPossibles[index]
 }
 
-// Renvoie les 5 cartes d'un booster Zelda
-export function tirerBooster() {
+// Renvoie les 5 cartes d'un booster Zelda. typeTirage : 'normal' ou 'legendaire'
+export function tirerBooster(typeTirage = 'normal') {
+  const table = tablesDeChances[typeTirage] ?? tablesDeChances.normal
   const cartesTirees = []
-  for (const chances of chancesParEmplacement) {
+  for (const chances of table) {
     cartesTirees.push(tirerCarteDeRarete(tirerRarete(chances)))
   }
   return cartesTirees

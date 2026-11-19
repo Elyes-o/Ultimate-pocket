@@ -118,8 +118,17 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
 - Tirage dans `src/donnees/tirage.js` : 5 cartes, emplacements 4 et 5 plus rares. Pourcentages PROVISOIRES.
 - Les cartes possédées vivent dans `JoueurContexte`.
 
+## Boutique (v1.3, 2026-11-19) — chiffres PROVISOIRES
+- Booster **Hyrule** : 100 Éclats OU 3 pubs (progression « Pub 1/3 » sauvegardée par booster).
+- Booster **Hyrule Légendaire** : 300 Éclats UNIQUEMENT (`nombrePubs: null`), tirage `legendaire`
+  (3★ garantie en 5e carte, 4★ plus fréquentes). Ruban doré + étoile (`PaquetBooster legendaire`).
+- **Tickets gratuits** : 1 pub = 1 Ticket, 5 par jour max (`PUBS_TICKETS_PAR_JOUR`), remis à zéro chaque jour.
+- **Éclats** en argent réel : 500 / 1 200 / 2 600 (4,99 / 9,99 / 19,99 €) affichés « Bientôt », aucun paiement.
+- Les pubs sont SIMULÉES (`FenetrePub`, 5 s). À remplacer par une vraie pub récompensée (ex. AdMob) plus tard.
+- `ConfirmationAchat` : fenêtre d'achat partagée accueil + boutique. L'ouverture reçoit `/ouverture?booster=<id>`.
+
 ## Sauvegarde (v1.2, 2026-11-19)
-- `JoueurContexte` sauvegarde Éclats, Tickets, minuteur du booster et cartes possédées avec
+- `JoueurContexte` sauvegarde Éclats, Tickets, minuteur du booster, cartes possédées et compteurs de pubs avec
   **AsyncStorage** (clé `ultimate-pocket:joueur`), à chaque changement. Relue au démarrage.
 - Sauvegarde LOCALE à l'appareil (pas encore de compte en ligne ; viendra avec Clerk + backend).
 - L'écran de chargement attend `donneesChargees` avant de passer à la connexion.

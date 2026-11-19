@@ -44,6 +44,9 @@
 - Visuels générés avec Figma AI et intégrés : cristal des Éclats, dos de carte, 3 paquets de booster illustrés, icône de l'app.
   (Icônes Canva essayées puis refusées par Elyes.)
 - Vitrine de l'accueil : 3 fonds illustrés (Figma AI) à la place des dégradés.
+- Dépôt git local créé (branche main), pas encore de dépôt GitHub.
+- Boutique : Hyrule (100 Éclats ou 3 pubs), Hyrule Légendaire (300 Éclats uniquement), Tickets via pubs
+  (5/jour), packs d'Éclats affichés « Bientôt ». Pubs simulées. Tous les chiffres sont provisoires.
 
 ## Règle de mise à jour
 À chaque nouvelle session : ajouter une section datée ici, puis mettre à jour `CLAUDE.md` si une décision change.

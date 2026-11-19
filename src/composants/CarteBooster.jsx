@@ -1,26 +1,14 @@
 // Ligne d'un booster dans la liste de l'accueil : paquet, nom, univers et prix (ou "Bientôt").
-// Appuyer dessus ouvre une fenêtre de confirmation avant de dépenser les Éclats.
+// Appuyer dessus ouvre la fenêtre de confirmation avant de dépenser les Éclats.
 import { useState } from 'react'
-import { View, Text, Pressable, Modal } from 'react-native'
-import { router } from 'expo-router'
-import { Ionicons } from '@expo/vector-icons'
+import { View, Text, Pressable } from 'react-native'
 import PaquetBooster from './PaquetBooster'
 import IconeEclat from './IconeEclat'
-import { useJoueur } from '../donnees/JoueurContexte'
-import { couleurs } from '../theme'
+import ConfirmationAchat from './ConfirmationAchat'
 import styles from './CarteBooster.styles'
 
 export default function CarteBooster({ booster }) {
-  const { eclats, depenserEclats } = useJoueur()
   const [confirmationVisible, setConfirmationVisible] = useState(false)
-  const assezDEclats = eclats >= booster.prixEclats
-
-  function acheterEtOuvrir() {
-    if (depenserEclats(booster.prixEclats)) {
-      setConfirmationVisible(false)
-      router.push('/ouverture')
-    }
-  }
 
   return (
     <>
@@ -29,7 +17,7 @@ export default function CarteBooster({ booster }) {
         onPress={() => setConfirmationVisible(true)}
         disabled={!booster.disponible}
       >
-        <PaquetBooster visuel={booster.visuel} verrouille={!booster.disponible} largeur={48} />
+        <PaquetBooster visuel={booster.visuel} verrouille={!booster.disponible} legendaire={booster.legendaire} largeur={48} />
 
         <View style={styles.infos}>
           <Text style={styles.nom}>{booster.nom}</Text>
@@ -48,30 +36,13 @@ export default function CarteBooster({ booster }) {
         )}
       </Pressable>
 
-      {/* Fenêtre de confirmation d'achat (s'ouvre par le bas) */}
-      <Modal visible={confirmationVisible} transparent animationType="fade" onRequestClose={() => setConfirmationVisible(false)}>
-        <Pressable style={styles.fondModal} onPress={() => setConfirmationVisible(false)}>
-          <Pressable style={styles.feuille} onPress={() => {}}>
-            <PaquetBooster visuel={booster.visuel} largeur={90} />
-            <Text style={styles.titreFeuille}>Ouvrir {booster.nom} ?</Text>
-            <Text style={styles.texteFeuille}>5 cartes · {booster.univers}</Text>
-
-            <Pressable
-              style={[styles.boutonAcheter, !assezDEclats && styles.boutonDesactive]}
-              onPress={acheterEtOuvrir}
-              disabled={!assezDEclats}
-            >
-              <Ionicons name="diamond" size={16} color={couleurs.texteInverse} />
-              <Text style={styles.texteBoutonAcheter}>
-                {assezDEclats ? 'Ouvrir pour ' + booster.prixEclats + ' Éclats' : 'Pas assez d\'Éclats'}
-              </Text>
-            </Pressable>
-            <Pressable style={styles.boutonAnnuler} onPress={() => setConfirmationVisible(false)}>
-              <Text style={styles.texteBoutonAnnuler}>Annuler</Text>
-            </Pressable>
-          </Pressable>
-        </Pressable>
-      </Modal>
+      {booster.disponible && (
+        <ConfirmationAchat
+          booster={booster}
+          visible={confirmationVisible}
+          quandOnFerme={() => setConfirmationVisible(false)}
+        />
+      )}
     </>
   )
 }

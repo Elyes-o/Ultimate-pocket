@@ -38,8 +38,10 @@ Ouvert en cliquant sur l'icône de profil.
 | Communauté | Gérer ses amis |
 
 ## 6. Boutique
-- Acheter des **packs** avec la **monnaie du jeu**.
-- Ou obtenir des packs / de la monnaie en regardant des **publicités**.
+- **Boosters** : achat en Éclats, ou gratuit après X pubs ; certains boosters (Légendaire) en Éclats uniquement.
+- **Tickets gratuits** : 1 pub = 1 Ticket, limité par jour.
+- **Éclats** : packs en argent réel (affichés « Bientôt » en v1).
+- **Prochainement** : boosters des univers à venir (verrouillés).
 
 ## 7. Combat (menu)
 Choix du mode (détail dans `MODES_DE_JEU.md`) :

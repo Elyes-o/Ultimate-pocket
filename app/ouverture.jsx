@@ -4,7 +4,7 @@
 //   3. "resume"     : les 5 cartes d'un coup, les nouvelles sont ajoutées à la collection
 import { useEffect, useRef, useState } from 'react'
 import { View, Text, Image, Pressable, Animated, Easing, Platform } from 'react-native'
-import { router } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Ionicons } from '@expo/vector-icons'
 import PaquetBooster from '../src/composants/PaquetBooster'
@@ -31,13 +31,15 @@ function libelleRarete(rarete) {
 
 export default function EcranOuverture() {
   const { possedeCarte, ajouterCartes } = useJoueur()
-  const booster = boosters[0] // v1 : seul le booster Zelda existe
+  // Le booster à ouvrir est donné dans l'adresse : /ouverture?booster=zelda-legendaire
+  const { booster: idBooster } = useLocalSearchParams()
+  const booster = boosters.find((element) => element.id === idBooster) ?? boosters[0]
 
   // Le tirage est fait UNE seule fois, à l'arrivée sur l'écran.
   // On note aussi si chaque carte est nouvelle (pas encore possédée, et pas déjà sortie dans ce booster).
   const [cartesTirees] = useState(() => {
     const dejaVues = []
-    return tirerBooster().map((carte) => {
+    return tirerBooster(booster.tirage).map((carte) => {
       const estNouvelle = !possedeCarte(carte.numero) && !dejaVues.includes(carte.numero)
       dejaVues.push(carte.numero)
       return { ...carte, estNouvelle }
@@ -153,7 +155,7 @@ export default function EcranOuverture() {
               ],
             }}
           >
-            <PaquetBooster visuel={booster.visuel} largeur={180} />
+            <PaquetBooster visuel={booster.visuel} legendaire={booster.legendaire} largeur={180} />
           </Animated.View>
           <Text style={styles.nomBooster}>{booster.nom}</Text>
           <Text style={styles.consigne}>Touche le booster pour l'ouvrir</Text>
