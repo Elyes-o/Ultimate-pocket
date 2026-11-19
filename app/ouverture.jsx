@@ -10,6 +10,7 @@ import { Ionicons } from '@expo/vector-icons'
 import PaquetBooster from '../src/composants/PaquetBooster'
 import DosCarte from '../src/composants/DosCarte'
 import { useJoueur } from '../src/donnees/JoueurContexte'
+import { useEffetsSonores } from '../src/sons'
 import { boosters } from '../src/donnees/accueil'
 import { tirerBooster } from '../src/donnees/tirage'
 import { couleurs } from '../src/theme'
@@ -31,6 +32,7 @@ function libelleRarete(rarete) {
 
 export default function EcranOuverture() {
   const { possedeCarte, ajouterCartes } = useJoueur()
+  const { jouerSon, vibrer } = useEffetsSonores()
   // Le booster à ouvrir est donné dans l'adresse : /ouverture?booster=zelda-legendaire
   const { booster: idBooster } = useLocalSearchParams()
   const booster = boosters.find((element) => element.id === idBooster) ?? boosters[0]
@@ -88,17 +90,31 @@ export default function EcranOuverture() {
     }
     apparitionCarte.setValue(0)
     Animated.spring(apparitionCarte, { toValue: 1, friction: 6, tension: 70, useNativeDriver: ANIMATION_NATIVE }).start()
+
+    // Son de la carte, et scintillement + vibration pour les cartes rares (3★ et plus)
+    const carte = cartesTirees[indexCarte]
+    jouerSon('carte')
+    if (carte.rarete >= 3) {
+      setTimeout(() => jouerSon('rare'), 120)
+      vibrer(carte.rarete === 4 ? 'fort' : 'moyen')
+    } else {
+      vibrer('leger')
+    }
   }, [etape, indexCarte])
 
   // À l'arrivée sur le résumé, on ajoute les cartes à la collection (une seule fois)
   useEffect(() => {
     if (etape === 'resume') {
       ajouterCartes(cartesTirees.map((carte) => carte.numero))
+      jouerSon('recompense')
+      vibrer('succes')
     }
   }, [etape])
 
   // Le joueur touche le paquet : il tremble, grossit, disparaît dans un flash blanc
   function ouvrirLePaquet() {
+    jouerSon('dechirure')
+    vibrer('moyen')
     Animated.sequence([
       Animated.sequence([
         Animated.timing(secousse, { toValue: 1, duration: 60, useNativeDriver: ANIMATION_NATIVE }),

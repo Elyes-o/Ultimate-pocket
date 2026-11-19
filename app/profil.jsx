@@ -203,7 +203,7 @@ export default function EcranProfil() {
             <Text style={[styles.texteParametre, styles.texteDanger]}>Recommencer la partie</Text>
           </Pressable>
         </View>
-        <Text style={styles.mention}>Son et vibrations : réglages enregistrés, effets sonores à venir.</Text>
+        <Text style={styles.mention}>Les vibrations ne fonctionnent que sur téléphone.</Text>
       </ScrollView>
 
       {/* Choix de l'avatar */}

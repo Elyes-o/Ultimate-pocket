@@ -16,6 +16,7 @@ import { prochaineActionDuBot } from '../src/combat/bot'
 import { decksBots, energieDepartBots, niveauxBot, fichesSupporters, fichesObjets, combos, nomsTypes, texteUltime } from '../src/donnees/combat'
 import { trouverCarte } from '../src/donnees/cartes'
 import { useJoueur } from '../src/donnees/JoueurContexte'
+import { useEffetsSonores } from '../src/sons'
 import { couleurs } from '../src/theme'
 import styles from '../src/ecrans/Partie.styles'
 
@@ -111,6 +112,7 @@ export default function EcranPartie() {
   const { niveau: idNiveau } = useLocalSearchParams()
   const niveau = niveauxBot.find((element) => element.id === idNiveau) ?? niveauxBot[0]
   const { deckDeCombat, recompenserCombat } = useJoueur()
+  const { jouerSon, vibrer } = useEffetsSonores()
 
   function nouveauCombat() {
     return creerCombat(deckDeCombat(), decksBots[niveau.id], 'Bot ' + niveau.nom, energieDepartBots[niveau.id])
@@ -148,6 +150,47 @@ export default function EcranPartie() {
     }, DELAI_BOT)
     return () => clearTimeout(minuteur)
   }, [etat, cinematique])
+
+  // ----- Bruitages et vibrations à chaque évènement du combat -----
+  useEffect(() => {
+    const evenement = etat.evenement
+    if (!evenement) {
+      return
+    }
+    if (evenement.type === 'attaque') {
+      const ko = evenement.koActif || evenement.koBanc.length > 0
+      jouerSon('impact')
+      vibrer(ko || evenement.ultime ? 'fort' : 'moyen')
+      if (ko) {
+        setTimeout(() => jouerSon('ko'), 300) // juste quand la carte KO commence à tomber
+      }
+    } else if (evenement.type === 'concentration') {
+      jouerSon('energie')
+    } else {
+      // Supporter, Objet, Talent, changement de combattant
+      jouerSon('carte')
+      vibrer('leger')
+    }
+  }, [etat.evenement ? etat.evenement.id : null])
+
+  // Début d'une cinématique d'Ultime : grande montée sonore
+  useEffect(() => {
+    if (cinematique) {
+      jouerSon('ultime')
+      vibrer('fort')
+    }
+  }, [cinematique])
+
+  // Fin du combat : fanfare (ou notes tristes), puis "ding" de la récompense
+  useEffect(() => {
+    if (!recompense) {
+      return
+    }
+    const victoire = etat.gagnant === 'joueur'
+    jouerSon(victoire ? 'victoire' : 'defaite')
+    vibrer(victoire ? 'succes' : 'echec')
+    setTimeout(() => jouerSon('recompense'), 900)
+  }, [recompense])
 
   // ----- Un Ultime vient de toucher : tout l'écran tremble -----
   useEffect(() => {

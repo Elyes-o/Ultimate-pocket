@@ -11,6 +11,7 @@ import CarteBooster from '../../src/composants/CarteBooster'
 import FenetrePub from '../../src/composants/FenetrePub'
 import IconeEclat from '../../src/composants/IconeEclat'
 import { useJoueur, PUBS_TICKETS_PAR_JOUR } from '../../src/donnees/JoueurContexte'
+import { useEffetsSonores } from '../../src/sons'
 import { boosters } from '../../src/donnees/accueil'
 import { offresEclats } from '../../src/donnees/boutique'
 import { couleurs } from '../../src/theme'
@@ -19,6 +20,8 @@ import styles from '../../src/ecrans/Boutique.styles'
 export default function EcranBoutique() {
   const { pubsParBooster, pubsTicketsRestantes, recompenserPubTicket, compterPubBooster, remettreAZeroPubsBooster } =
     useJoueur()
+
+  const { jouerSon } = useEffetsSonores()
 
   // Pourquoi la pub est regardée : null (pas de pub), { type: 'ticket' } ou { type: 'booster', booster }
   const [pubEnCours, setPubEnCours] = useState(null)
@@ -29,6 +32,7 @@ export default function EcranBoutique() {
 
   // La pub est finie : on donne la récompense
   function quandLaPubEstFinie() {
+    jouerSon('recompense')
     if (pubEnCours.type === 'ticket') {
       recompenserPubTicket()
     } else {

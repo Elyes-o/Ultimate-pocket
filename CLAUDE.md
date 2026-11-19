@@ -165,11 +165,21 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
 ## Profil (2026-11-19)
 - `app/profil.jsx` : avatar (carte possédée recadrée sur le dessin, ou initiale) et pseudo modifiables (16 car. max),
   victoires / défaites / taux, bots battus, meilleure carte (la plus rare puis le plus de PV), carte favorite
-  (la plus jouée en combat), paramètres Son / Vibrations (enregistrés, pas encore de sons), Langue (Français),
+  (la plus jouée en combat), paramètres Son / Vibrations, Langue (Français),
   Se déconnecter (→ login factice), Recommencer la partie (confirmation, efface tout).
 - `AvatarJoueur` : composant réutilisé dans le bandeau du haut.
 - `JoueurContexte` : `partieDeDepart()` = UNE seule définition de la partie neuve (1er lancement, vieilles
   sauvegardes complétées, bouton Recommencer). `statistiques.cartesJouees` compte les cartes du deck à chaque combat.
+
+## Sons et vibrations (2026-11-19)
+- `assets/sons/*.wav` : 12 bruitages ORIGINAUX créés par synthèse (Python/numpy), aucun droit d'auteur :
+  clic, carte, impact, ko, energie, ultime, dechirure, rare, victoire, defaite, recompense, ticket.
+- `src/sons.js` : `useEffetsSonores()` → `jouerSon(nom)` et `vibrer('leger'|'moyen'|'fort'|'succes'|'echec')`.
+  Respecte les réglages Son / Vibrations du Profil. Paquets : `expo-audio` (sons), `expo-haptics` (vibrations,
+  rien sur le web). Un son qui échoue ne bloque jamais le jeu.
+- Branchés sur : barre d'onglets (clic), combat (impact, KO, énergie, cartes, cinématique d'Ultime,
+  victoire/défaite + récompense), ouverture de booster (déchirure, carte, rare, récompense), pubs de la
+  Boutique (récompense), Ticket du booster quotidien.
 
 ## Sauvegarde (v1.2, 2026-11-19)
 - `JoueurContexte` sauvegarde Éclats, Tickets, minuteur du booster, cartes possédées et compteurs de pubs avec

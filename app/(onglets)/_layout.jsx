@@ -3,6 +3,7 @@
 import { Tabs } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import BandeauHaut from '../../src/composants/BandeauHaut'
+import { useEffetsSonores } from '../../src/sons'
 import { couleurs, polices } from '../../src/theme'
 
 // Liste des onglets : nom du fichier, titre affiché, icône (Ionicons)
@@ -15,8 +16,11 @@ const onglets = [
 ]
 
 export default function MiseEnPageOnglets() {
+  const { jouerSon } = useEffetsSonores()
+
   return (
     <Tabs
+      screenListeners={{ tabPress: () => jouerSon('clic') }}
       screenOptions={{
         header: () => <BandeauHaut />,
         sceneStyle: { backgroundColor: couleurs.fond },

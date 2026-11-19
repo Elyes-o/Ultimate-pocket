@@ -6,6 +6,7 @@ import { router } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import PaquetBooster from './PaquetBooster'
 import { useJoueur, DUREE_RECHARGE_BOOSTER } from '../donnees/JoueurContexte'
+import { useEffetsSonores } from '../sons'
 import { boosters } from '../donnees/accueil'
 import { couleurs } from '../theme'
 import styles from './BoosterQuotidien.styles'
@@ -21,6 +22,13 @@ function formaterDuree(millisecondes) {
 
 export default function BoosterQuotidien() {
   const { tickets, boosterPretA, utiliserTicket, relancerBoosterQuotidien } = useJoueur()
+  const { jouerSon, vibrer } = useEffetsSonores()
+
+  function quandOnUtiliseUnTicket() {
+    jouerSon('ticket')
+    vibrer('leger')
+    utiliserTicket()
+  }
   const [maintenant, setMaintenant] = useState(Date.now())
 
   // On met l'heure à jour chaque seconde pour faire tourner le minuteur
@@ -65,7 +73,7 @@ export default function BoosterQuotidien() {
         ) : (
           <Pressable
             style={[styles.bouton, styles.boutonTicket, tickets === 0 && styles.boutonDesactive]}
-            onPress={utiliserTicket}
+            onPress={quandOnUtiliseUnTicket}
             disabled={tickets === 0}
           >
             <Ionicons name="ticket" size={16} color={couleurs.ticket} />

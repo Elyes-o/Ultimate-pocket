@@ -65,5 +65,9 @@
 - Link (Prodige) rééquilibré (+20 par Prodige). Difficulté vérifiée par simulation (10 000 parties).
 - Bug corrigé : le bot planifiait une attaque avant de jouer Impa (qui change l'actif) → une action à la fois.
 
+## Session du 2026-11-19 — sons et vibrations
+- 12 bruitages originaux (synthèse) + vibrations, branchés sur le combat, les boosters, la boutique et les onglets.
+- Les réglages Son / Vibrations du Profil fonctionnent désormais.
+
 ## Règle de mise à jour
 À chaque nouvelle session : ajouter une section datée ici, puis mettre à jour `CLAUDE.md` si une décision change.
