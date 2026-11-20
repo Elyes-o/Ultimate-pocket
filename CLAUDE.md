@@ -101,6 +101,8 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
 
 ## Données et assets
 - 23 cartes illustrées de la collection BOTW (Breath of the Wild), dans `cards.zip` (fourni par Elyes), à utiliser dans le jeu.
+- Le dossier `images/` (ces 23 cartes) est dans `.gitignore` : JAMAIS publié sur GitHub (dépôt public
+  `Elyes-o/Ultimate-pocket`). Il a aussi été retiré de tout l'historique git le 2026-11-20. Ne pas le ré-ajouter.
 - Exemples de cartes déjà évoquées : Link (Zelda), Luffy ex (One Piece), Prince Sidon (Zelda).
 - Univers prévus : Hollow Knight, Zelda, One Piece.
 
@@ -171,6 +173,20 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
 - `JoueurContexte` : `partieDeDepart()` = UNE seule définition de la partie neuve (1er lancement, vieilles
   sauvegardes complétées, bouton Recommencer). `statistiques.cartesJouees` compte les cartes du deck à chaque combat.
 
+## Collection v2 (2026-11-20) — chiffres PROVISOIRES dans `src/donnees/collection.js`
+- **Doublons comptés** : `JoueurContexte.exemplaires` = `{ numéro: nombre }` (remplace l'ancienne liste
+  `cartesPossedees`, qui reste disponible, calculée). Les vieilles sauvegardes sont converties (1 exemplaire chacune).
+  Pastille « ×2 » sur la grille.
+- **Recyclage** : un doublon → Éclats selon la rareté (1★ 5, 2★ 10, 3★ 25, 4★ 60). On garde toujours 1 exemplaire.
+  Bouton « Recycler tout » (avec confirmation) dans la Collection, « Recycler 1 doublon » dans la fiche.
+- **Paliers** 25 / 50 / 75 / 100 % : 100 Éclats ; 200 + 1 Ticket ; 300 + 2 Tickets ; 500 + 3 Tickets + titre
+  « Maître d'Hyrule » (affiché sous le pseudo dans le Profil). À réclamer à la main (`paliersReclames`).
+- **Filtres** : Toutes / Possédées / Manquantes, rareté 1★ à 4★, catégorie (Combattants, Supporters, Objets), cumulables.
+- **Fiche carte** (`FicheCarte`) : carte en grand qu'on incline du doigt (reflet brillant sur 3★ et 4★), type, PV,
+  faiblesse, retraite, talent, attaques, effet des Supporters / Objets, combos où la carte joue (partenaires
+  en silhouette s'ils ne sont pas possédés), exemplaires et combats joués.
+- `couleursTypes` et `texteEffets` sont maintenant dans `src/donnees/combat.js` (partagés combat + collection).
+
 ## Sons et vibrations (2026-11-19)
 - `assets/sons/*.wav` : 12 bruitages ORIGINAUX créés par synthèse (Python/numpy), aucun droit d'auteur :
   clic, carte, impact, ko, energie, ultime, dechirure, rare, victoire, defaite, recompense, ticket.
@@ -182,7 +198,7 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
   Boutique (récompense), Ticket du booster quotidien.
 
 ## Sauvegarde (v1.2, 2026-11-19)
-- `JoueurContexte` sauvegarde Éclats, Tickets, minuteur du booster, cartes possédées et compteurs de pubs avec
+- `JoueurContexte` sauvegarde Éclats, Tickets, minuteur du booster, exemplaires des cartes, paliers et compteurs de pubs avec
   **AsyncStorage** (clé `ultimate-pocket:joueur`), à chaque changement. Relue au démarrage.
 - Sauvegarde LOCALE à l'appareil (pas encore de compte en ligne ; viendra avec Clerk + backend).
 - L'écran de chargement attend `donneesChargees` avant de passer à la connexion.

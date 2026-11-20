@@ -82,6 +82,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  titreJoueur: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: espaces.xs,
+    paddingHorizontal: espaces.m,
+    paddingVertical: 4,
+    borderRadius: rayons.rond,
+    backgroundColor: '#FFF4DE',
+  },
+  texteTitreJoueur: {
+    fontFamily: polices.tresGrasse,
+    fontSize: 13,
+    color: '#B8740A',
+  },
   sousTitre: {
     fontFamily: polices.grasse,
     fontSize: 13,

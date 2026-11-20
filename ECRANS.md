@@ -56,6 +56,10 @@ Choix du mode (détail dans `MODES_DE_JEU.md`) :
 - Affichage en grille de cartes, façon Pokémon TCG Pocket (onglets en haut).
 - Zelda : 23 cartes BOTW déjà disponibles.
 - Cartes non possédées : silhouette grise + numéro ; compteur « possédées / total » en haut.
+- Paliers de récompenses à 25 / 50 / 75 / 100 % sous le compteur (cadeau à réclamer).
+- Doublons : pastille « ×2 » sur la carte, bouton pour tout recycler en Éclats.
+- Filtres : Toutes / Possédées / Manquantes, rareté, catégorie.
+- Appui sur une carte possédée : fiche complète (carte inclinable, stats de combat, combos, exemplaires).
 
 ## 9. Communauté
 - Ajouter des amis.

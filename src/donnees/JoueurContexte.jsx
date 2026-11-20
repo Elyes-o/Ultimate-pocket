@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { cartesZelda } from './cartes'
 import { categorieCarte, niveauxBot, RECOMPENSE_DEFAITE } from './combat'
+import { VALEUR_RECYCLAGE, paliersCollection, cartesRequises } from './collection'
 
 // Nom sous lequel la partie est rangée dans le stockage
 const CLE_SAUVEGARDE = 'ultimate-pocket:joueur'
@@ -29,7 +30,9 @@ function partieDeDepart() {
     eclats: 1250,
     tickets: 3,
     boosterPretA: Date.now() + 3 * UNE_HEURE + 12 * 60 * 1000, // booster quotidien prêt dans 3 h 12
-    cartesPossedees: cartesZelda.filter((carte) => carte.possedee).map((carte) => carte.numero),
+    // Nombre d'exemplaires de chaque carte possédée, ex. { 1: 1, 9: 3 } (3 = la carte + 2 doublons)
+    exemplaires: Object.fromEntries(cartesZelda.filter((carte) => carte.possedee).map((carte) => [carte.numero, 1])),
+    paliersReclames: [], // paliers de collection déjà réclamés, ex. ['p25']
     pubsParBooster: {}, // ex. { 'zelda-botw': 2 }
     pubsTicketsDuJour: { jour: dateDuJour(), nombre: 0 },
     deck: null, // { combattants: [5 numéros], supporter, objet } ; null = deck automatique
@@ -53,7 +56,8 @@ export function JoueurFournisseur({ children }) {
   const [eclats, setEclats] = useState(depart.eclats)
   const [tickets, setTickets] = useState(depart.tickets)
   const [boosterPretA, setBoosterPretA] = useState(depart.boosterPretA)
-  const [cartesPossedees, setCartesPossedees] = useState(depart.cartesPossedees)
+  const [exemplaires, setExemplaires] = useState(depart.exemplaires)
+  const [paliersReclames, setPaliersReclames] = useState(depart.paliersReclames)
   const [pubsParBooster, setPubsParBooster] = useState(depart.pubsParBooster)
   const [pubsTicketsDuJour, setPubsTicketsDuJour] = useState(depart.pubsTicketsDuJour)
   const [deck, setDeck] = useState(depart.deck)
@@ -67,12 +71,17 @@ export function JoueurFournisseur({ children }) {
     // On complète avec la partie de départ : une vieille sauvegarde n'a pas forcément tous les champs
     const complete = { ...partieDeDepart(), ...partie }
     complete.statistiques = { ...partieDeDepart().statistiques, ...partie.statistiques }
+    // Vieille sauvegarde (avant les doublons) : une liste "cartesPossedees" → 1 exemplaire de chaque
+    if (!partie.exemplaires && partie.cartesPossedees) {
+      complete.exemplaires = Object.fromEntries(partie.cartesPossedees.map((numero) => [numero, 1]))
+    }
     setPseudo(complete.pseudo)
     setAvatar(complete.avatar)
     setEclats(complete.eclats)
     setTickets(complete.tickets)
     setBoosterPretA(complete.boosterPretA)
-    setCartesPossedees(complete.cartesPossedees)
+    setExemplaires(complete.exemplaires)
+    setPaliersReclames(complete.paliersReclames)
     setPubsParBooster(complete.pubsParBooster)
     setPubsTicketsDuJour(complete.pubsTicketsDuJour)
     setDeck(complete.deck)
@@ -100,7 +109,7 @@ export function JoueurFournisseur({ children }) {
   // 2. À chaque changement : on sauvegarde la partie.
   // On attend d'avoir chargé, sinon on écraserait la sauvegarde avec les valeurs de départ.
   const partie = {
-    pseudo, avatar, eclats, tickets, boosterPretA, cartesPossedees,
+    pseudo, avatar, eclats, tickets, boosterPretA, exemplaires, paliersReclames,
     pubsParBooster, pubsTicketsDuJour, deck, statistiques, parametres,
   }
   useEffect(() => {
@@ -167,17 +176,85 @@ export function JoueurFournisseur({ children }) {
 
   // ---------- Collection ----------
 
+  // Numéros des cartes possédées (au moins 1 exemplaire), dans l'ordre de la collection
+  const cartesPossedees = cartesZelda
+    .filter((carte) => (exemplaires[carte.numero] ?? 0) > 0)
+    .map((carte) => carte.numero)
+
   function possedeCarte(numero) {
-    return cartesPossedees.includes(numero)
+    return (exemplaires[numero] ?? 0) > 0
   }
 
-  // Ajoute à la collection les cartes qu'on n'avait pas encore
+  function nombreExemplaires(numero) {
+    return exemplaires[numero] ?? 0
+  }
+
+  // Ajoute les cartes d'un booster : +1 exemplaire par carte tirée (les doublons sont comptés)
   function ajouterCartes(numeros) {
-    setCartesPossedees((anciennes) => {
-      const nouvelles = numeros.filter((numero) => !anciennes.includes(numero))
-      return [...anciennes, ...nouvelles]
+    setExemplaires((anciens) => {
+      const nouveaux = { ...anciens }
+      for (const numero of numeros) {
+        nouveaux[numero] = (nouveaux[numero] ?? 0) + 1
+      }
+      return nouveaux
     })
   }
+
+  // Éclats que rapporteraient tous les doublons d'une carte (ou de toute la collection si numero est absent)
+  function valeurDoublons(numero) {
+    const numeros = numero === undefined ? cartesPossedees : [numero]
+    let total = 0
+    for (const element of numeros) {
+      const doublons = Math.max(0, (exemplaires[element] ?? 0) - 1)
+      total = total + doublons * VALEUR_RECYCLAGE[cartesZelda.find((carte) => carte.numero === element).rarete]
+    }
+    return total
+  }
+
+  // Recycle les doublons contre des Éclats (on garde toujours 1 exemplaire).
+  // Avec un numéro : seulement 1 doublon de cette carte. Sans numéro : tous les doublons.
+  // Renvoie le nombre d'Éclats gagnés.
+  function recyclerDoublons(numero) {
+    const nouveaux = { ...exemplaires }
+    let gain = 0
+    const numeros = numero === undefined ? cartesPossedees : [numero]
+    for (const element of numeros) {
+      const doublons = Math.max(0, (nouveaux[element] ?? 0) - 1)
+      const aRecycler = numero === undefined ? doublons : Math.min(1, doublons)
+      if (aRecycler > 0) {
+        nouveaux[element] = nouveaux[element] - aRecycler
+        gain = gain + aRecycler * VALEUR_RECYCLAGE[cartesZelda.find((carte) => carte.numero === element).rarete]
+      }
+    }
+    if (gain > 0) {
+      setExemplaires(nouveaux)
+      setEclats(eclats + gain)
+    }
+    return gain
+  }
+
+  // État d'un palier : 'reclame', 'pret' (à réclamer) ou 'verrouille'
+  function etatPalier(palier) {
+    if (paliersReclames.includes(palier.id)) {
+      return 'reclame'
+    }
+    return cartesPossedees.length >= cartesRequises(palier, cartesZelda.length) ? 'pret' : 'verrouille'
+  }
+
+  // Donne la récompense d'un palier atteint. Renvoie le palier, ou null s'il n'est pas prêt.
+  function reclamerPalier(idPalier) {
+    const palier = paliersCollection.find((element) => element.id === idPalier)
+    if (!palier || etatPalier(palier) !== 'pret') {
+      return null
+    }
+    setEclats(eclats + palier.eclats)
+    setTickets(tickets + palier.tickets)
+    setPaliersReclames([...paliersReclames, palier.id])
+    return palier
+  }
+
+  // Titre affiché sous le pseudo (débloqué par le palier 100 %), ou null
+  const titre = paliersCollection.find((palier) => palier.titre && paliersReclames.includes(palier.id))?.titre ?? null
 
   // ---------- Combat ----------
 
@@ -262,7 +339,13 @@ export function JoueurFournisseur({ children }) {
     relancerBoosterQuotidien,
     depenserEclats,
     possedeCarte,
+    nombreExemplaires,
     ajouterCartes,
+    valeurDoublons,
+    recyclerDoublons,
+    etatPalier,
+    reclamerPalier,
+    titre,
     pubsParBooster,
     pubsTicketsRestantes,
     recompenserPubTicket,

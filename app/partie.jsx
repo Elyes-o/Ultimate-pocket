@@ -13,7 +13,7 @@ import IconeEclat from '../src/composants/IconeEclat'
 import { DegatsFlottants, CarteKo, BandeauTour } from '../src/composants/EffetsCombat'
 import { creerCombat, jouerAction, actionsPossibles } from '../src/combat/moteur'
 import { prochaineActionDuBot } from '../src/combat/bot'
-import { decksBots, energieDepartBots, niveauxBot, fichesSupporters, fichesObjets, combos, nomsTypes, texteUltime } from '../src/donnees/combat'
+import { decksBots, energieDepartBots, niveauxBot, fichesSupporters, fichesObjets, combos, nomsTypes, texteUltime, couleursTypes, texteEffets } from '../src/donnees/combat'
 import { trouverCarte } from '../src/donnees/cartes'
 import { useJoueur } from '../src/donnees/JoueurContexte'
 import { useEffetsSonores } from '../src/sons'
@@ -24,31 +24,6 @@ const DELAI_BOT = 1300 // le bot "réfléchit" un peu avant de jouer (millisecon
 const LARGEUR_ACTIF = 90
 const LARGEUR_BANC = 34
 const ANIMATION_NATIVE = Platform.OS !== 'web'
-
-// Couleur de l'onde de choc selon le type de l'attaquant
-const couleursTypes = {
-  feu: '#E2483D', eau: '#1FB6E6', electrique: '#F7B731', combat: '#C0702B', psy: '#C77DFF',
-  tenebres: '#3B4A6B', metal: '#8C98A8', incolore: '#5B4CF5',
-}
-
-// Texte court qui résume les effets d'une attaque
-function texteEffets(effets) {
-  if (!effets) {
-    return ''
-  }
-  const morceaux = []
-  if (effets.zone) morceaux.push('Zone ' + effets.zone)
-  if (effets.bouclier) morceaux.push('Bouclier ' + effets.bouclier)
-  if (effets.soinBanc) morceaux.push('Soin banc ' + effets.soinBanc)
-  if (effets.energieAdverse) morceaux.push('-' + effets.energieAdverse + ' ⚡ adverse')
-  if (effets.recul) morceaux.push('Recul ' + effets.recul)
-  if (effets.bloque) morceaux.push('Bloque')
-  if (effets.ignoreBouclier) morceaux.push('Perce boucliers')
-  if (effets.critique) morceaux.push('Critique +' + effets.critique.bonus)
-  if (effets.bonusParProdige) morceaux.push('+' + effets.bonusParProdige + '/Prodige')
-  if (effets.fatigue) morceaux.push('Fatigue')
-  return morceaux.join(' · ')
-}
 
 // Cartes à montrer dans la cinématique d'un combo
 function numerosDuCombo(camp, combo) {

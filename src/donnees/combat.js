@@ -266,6 +266,31 @@ export function categorieCarte(numero) {
   return 'objet'
 }
 
+// Couleur de chaque type (onde de choc en combat, pastille de type dans la Collection)
+export const couleursTypes = {
+  feu: '#E2483D', eau: '#1FB6E6', electrique: '#F7B731', combat: '#C0702B', psy: '#C77DFF',
+  tenebres: '#3B4A6B', metal: '#8C98A8', incolore: '#5B4CF5', plante: '#2F9E62', fee: '#F27DB5',
+}
+
+// Texte court qui résume les effets d'une attaque
+export function texteEffets(effets) {
+  if (!effets) {
+    return ''
+  }
+  const morceaux = []
+  if (effets.zone) morceaux.push('Zone ' + effets.zone)
+  if (effets.bouclier) morceaux.push('Bouclier ' + effets.bouclier)
+  if (effets.soinBanc) morceaux.push('Soin banc ' + effets.soinBanc)
+  if (effets.energieAdverse) morceaux.push('-' + effets.energieAdverse + ' ⚡ adverse')
+  if (effets.recul) morceaux.push('Recul ' + effets.recul)
+  if (effets.bloque) morceaux.push('Bloque')
+  if (effets.ignoreBouclier) morceaux.push('Perce boucliers')
+  if (effets.critique) morceaux.push('Critique +' + effets.critique.bonus)
+  if (effets.bonusParProdige) morceaux.push('+' + effets.bonusParProdige + '/Prodige')
+  if (effets.fatigue) morceaux.push('Fatigue')
+  return morceaux.join(' · ')
+}
+
 // Noms affichés des types
 export const nomsTypes = {
   incolore: 'Incolore', tenebres: 'Ténèbres', psy: 'Psy', combat: 'Combat', eau: 'Eau',

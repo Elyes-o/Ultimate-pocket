@@ -38,7 +38,7 @@ function CarteMiseEnAvant({ titre, numero, detail, vide }) {
 export default function EcranProfil() {
   const marges = useSafeAreaInsets()
   const {
-    pseudo, changerPseudo, avatar, setAvatar, cartesPossedees, statistiques,
+    pseudo, changerPseudo, avatar, setAvatar, cartesPossedees, statistiques, titre,
     parametres, changerParametre, recommencerPartie,
   } = useJoueur()
 
@@ -120,6 +120,12 @@ export default function EcranProfil() {
               <Pressable style={styles.boutonValider} onPress={validerPseudo} accessibilityLabel="Valider le pseudo">
                 <Ionicons name="checkmark" size={18} color={couleurs.texteInverse} />
               </Pressable>
+            </View>
+          )}
+          {titre && (
+            <View style={styles.titreJoueur}>
+              <Ionicons name="ribbon" size={14} color={couleurs.ticket} />
+              <Text style={styles.texteTitreJoueur}>{titre}</Text>
             </View>
           )}
           <Text style={styles.sousTitre}>

@@ -69,5 +69,10 @@
 - 12 bruitages originaux (synthèse) + vibrations, branchés sur le combat, les boosters, la boutique et les onglets.
 - Les réglages Son / Vibrations du Profil fonctionnent désormais.
 
+## Session du 2026-11-20 — dépôt GitHub et Collection v2
+- Dépôt public `Elyes-o/Ultimate-pocket` : images des cartes retirées (gardées en local), commits à son seul nom.
+- Grill de la Collection : doublons comptés et recyclables en Éclats, fiche complète avec carte inclinable,
+  filtres (possession, rareté, catégorie), paliers de récompenses 25/50/75/100 % et titre « Maître d'Hyrule ».
+
 ## Règle de mise à jour
 À chaque nouvelle session : ajouter une section datée ici, puis mettre à jour `CLAUDE.md` si une décision change.

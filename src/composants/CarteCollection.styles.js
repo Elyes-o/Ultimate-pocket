@@ -31,6 +31,22 @@ const styles = StyleSheet.create({
     color: '#A9B0C3',
     marginTop: 2,
   },
+  pastilleExemplaires: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    minWidth: 26,
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 999,
+    backgroundColor: 'rgba(20, 26, 46, 0.82)',
+    alignItems: 'center',
+  },
+  texteExemplaires: {
+    fontFamily: polices.titre,
+    fontSize: 11,
+    color: couleurs.texteInverse,
+  },
   etoiles: {
     flexDirection: 'row',
     gap: 1,
