@@ -49,6 +49,8 @@ Choix du mode (détail dans `MODES_DE_JEU.md`) :
 - Contre une personne
 - Solo : 5 cartes dans le deck
 - Duo : 6 cartes
+- En haut : carte « Apprends à combattre » (tutoriel guidé avec Impa, booster offert la 1re fois).
+- En combat : on touche sa carte active pour voir ses attaques et la Retraite (comme TCG Pocket).
 
 ## 8. Collection
 - Écran de choix : on clique sur la collection voulue.

@@ -1,10 +1,9 @@
 import { StyleSheet } from 'react-native'
-import { couleurs, espaces, rayons, polices, tailles, ombre, RATIO_CARTE } from '../theme'
+import { couleurs, espaces, rayons, polices, tailles, ombre, RATIO_CARTE, reliefBouton } from '../theme'
 
 const styles = StyleSheet.create({
   ecran: {
     flex: 1,
-    backgroundColor: couleurs.fond,
   },
   entete: {
     flexDirection: 'row',
@@ -81,6 +80,7 @@ const styles = StyleSheet.create({
     backgroundColor: couleurs.principale,
     alignItems: 'center',
     justifyContent: 'center',
+    ...reliefBouton,
   },
   titreJoueur: {
     flexDirection: 'row',
@@ -132,6 +132,11 @@ const styles = StyleSheet.create({
     color: couleurs.texte,
     marginTop: espaces.xl,
     marginBottom: espaces.s,
+    // Onglet de classeur : une languette Lagon à gauche du titre
+    borderLeftWidth: 5,
+    borderLeftColor: couleurs.principale,
+    borderRadius: 3,
+    paddingLeft: 10,
   },
 
   // Niveaux battus

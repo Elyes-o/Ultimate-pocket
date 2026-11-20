@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   voileGris: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: 'rgba(40,44,60,0.6)',
   },
   tamponKo: {

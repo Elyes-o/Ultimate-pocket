@@ -25,7 +25,7 @@ export default function ConfirmationAchat({ booster, visible, quandOnFerme }) {
         <Pressable style={styles.feuille} onPress={() => {}}>
           <PaquetBooster visuel={booster.visuel} largeur={90} />
           <Text style={styles.titreFeuille}>Ouvrir {booster.nom} ?</Text>
-          <Text style={styles.texteFeuille}>5 cartes · {booster.univers}</Text>
+          <Text style={styles.texteFeuille}>5 cartes par booster</Text>
 
           <Pressable
             style={[styles.boutonAcheter, !assezDEclats && styles.boutonDesactive]}

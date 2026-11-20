@@ -140,7 +140,7 @@ function FicheCombattant({ fiche }) {
 
       {fiche.talent && (
         <View style={styles.talent}>
-          <Text style={styles.nomTalent}>Talent · {fiche.talent.nom}</Text>
+          <Text style={styles.nomTalent}>Talent : {fiche.talent.nom}</Text>
           <Text style={styles.texteTalent}>{fiche.talent.texte}</Text>
         </View>
       )}
@@ -222,7 +222,7 @@ export default function FicheCarte({ numero, quandOnFerme }) {
           {doublons > 0 && (
             <Pressable style={styles.boutonRecycler} onPress={recyclerUnDoublon}>
               <Ionicons name="sync" size={18} color={couleurs.texteInverse} />
-              <Text style={styles.texteBoutonRecycler}>Recycler 1 doublon · +{VALEUR_RECYCLAGE[carte.rarete]}</Text>
+              <Text style={styles.texteBoutonRecycler}>Recycler 1 doublon (+{VALEUR_RECYCLAGE[carte.rarete]})</Text>
               <IconeEclat taille={16} />
             </Pressable>
           )}

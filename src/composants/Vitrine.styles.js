@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   fond: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     width: '100%',
     height: '100%',
   },
@@ -37,7 +37,6 @@ const styles = StyleSheet.create({
   texteBadge: {
     fontFamily: polices.tresGrasse,
     fontSize: 10,
-    letterSpacing: 0.6,
     color: couleurs.texteInverse,
   },
   titre: {

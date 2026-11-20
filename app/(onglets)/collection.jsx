@@ -14,6 +14,7 @@ import { useJoueur } from '../../src/donnees/JoueurContexte'
 import { useEffetsSonores } from '../../src/sons'
 import { couleurs } from '../../src/theme'
 import styles from '../../src/ecrans/Collection.styles'
+import EcranOnglet from '../../src/composants/EcranOnglet'
 
 const univers = [
   { id: 'zelda', nom: 'Zelda', disponible: true },
@@ -224,81 +225,83 @@ export default function EcranCollection() {
   )
 
   return (
-    <View style={styles.ecran}>
-      <FlatList
-        data={cartesAffichees}
-        keyExtractor={(carte) => String(carte.numero)}
-        numColumns={3}
-        ListHeaderComponent={entete}
-        ListEmptyComponent={
-          <View style={styles.vide}>
-            <Ionicons name="search" size={28} color={couleurs.texteSecondaire} />
-            <Text style={styles.texteVide}>Aucune carte ne correspond à ces filtres.</Text>
-          </View>
-        }
-        contentContainerStyle={styles.contenu}
-        columnWrapperStyle={styles.ligneGrille}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <CarteCollection
-            carte={item}
-            possedee={possedeCarte(item.numero)}
-            exemplaires={nombreExemplaires(item.numero)}
-            quandOnAppuie={ouvrirCarte}
-          />
-        )}
-      />
+    <EcranOnglet>
+      <View style={styles.ecran}>
+        <FlatList
+          data={cartesAffichees}
+          keyExtractor={(carte) => String(carte.numero)}
+          numColumns={3}
+          ListHeaderComponent={entete}
+          ListEmptyComponent={
+            <View style={styles.vide}>
+              <Ionicons name="search" size={28} color={couleurs.texteSecondaire} />
+              <Text style={styles.texteVide}>Aucune carte ne correspond à ces filtres.</Text>
+            </View>
+          }
+          contentContainerStyle={styles.contenu}
+          columnWrapperStyle={styles.ligneGrille}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <CarteCollection
+              carte={item}
+              possedee={possedeCarte(item.numero)}
+              exemplaires={nombreExemplaires(item.numero)}
+              quandOnAppuie={ouvrirCarte}
+            />
+          )}
+        />
 
-      {carteOuverte !== null && <FicheCarte numero={carteOuverte} quandOnFerme={() => setCarteOuverte(null)} />}
+        {carteOuverte !== null && <FicheCarte numero={carteOuverte} quandOnFerme={() => setCarteOuverte(null)} />}
 
-      {/* Récompense d'un palier */}
-      <Modal visible={palierRecu !== null} transparent animationType="fade" onRequestClose={() => setPalierRecu(null)}>
-        <Pressable style={styles.fondModal} onPress={() => setPalierRecu(null)}>
-          {palierRecu && (
-            <Pressable style={styles.feuille} onPress={() => {}}>
-              <View style={styles.iconeCadeau}>
-                <Ionicons name="gift" size={34} color={couleurs.texteInverse} />
-              </View>
-              <Text style={styles.titreFeuille}>Palier {palierRecu.pourcentage} % atteint !</Text>
-              <View style={styles.ligneGains}>
-                <View style={styles.gain}>
-                  <IconeEclat taille={20} />
-                  <Text style={styles.texteGain}>+{palierRecu.eclats}</Text>
+        {/* Récompense d'un palier */}
+        <Modal visible={palierRecu !== null} transparent animationType="fade" onRequestClose={() => setPalierRecu(null)}>
+          <Pressable style={styles.fondModal} onPress={() => setPalierRecu(null)}>
+            {palierRecu && (
+              <Pressable style={styles.feuille} onPress={() => {}}>
+                <View style={styles.iconeCadeau}>
+                  <Ionicons name="gift" size={34} color={couleurs.texteInverse} />
                 </View>
-                {palierRecu.tickets > 0 && (
+                <Text style={styles.titreFeuille}>Palier {palierRecu.pourcentage} % atteint !</Text>
+                <View style={styles.ligneGains}>
                   <View style={styles.gain}>
-                    <Ionicons name="ticket" size={20} color={couleurs.ticket} />
-                    <Text style={styles.texteGain}>+{palierRecu.tickets}</Text>
+                    <IconeEclat taille={20} />
+                    <Text style={styles.texteGain}>+{palierRecu.eclats}</Text>
                   </View>
+                  {palierRecu.tickets > 0 && (
+                    <View style={styles.gain}>
+                      <Ionicons name="ticket" size={20} color={couleurs.ticket} />
+                      <Text style={styles.texteGain}>+{palierRecu.tickets}</Text>
+                    </View>
+                  )}
+                </View>
+                {palierRecu.titre && (
+                  <Text style={styles.texteFeuille}>Nouveau titre débloqué : « {palierRecu.titre} », visible sur ton profil.</Text>
                 )}
-              </View>
-              {palierRecu.titre && (
-                <Text style={styles.texteFeuille}>Nouveau titre débloqué : « {palierRecu.titre} », visible sur ton profil.</Text>
-              )}
-              <Pressable style={styles.boutonPrincipal} onPress={() => setPalierRecu(null)}>
-                <Text style={styles.texteBoutonPrincipal}>Super !</Text>
+                <Pressable style={styles.boutonPrincipal} onPress={() => setPalierRecu(null)}>
+                  <Text style={styles.texteBoutonPrincipal}>Super !</Text>
+                </Pressable>
+              </Pressable>
+            )}
+          </Pressable>
+        </Modal>
+
+        {/* Confirmation du recyclage de tous les doublons */}
+        <Modal visible={confirmerRecyclage} transparent animationType="fade" onRequestClose={() => setConfirmerRecyclage(false)}>
+          <Pressable style={styles.fondModal} onPress={() => setConfirmerRecyclage(false)}>
+            <Pressable style={styles.feuille} onPress={() => {}}>
+              <Text style={styles.titreFeuille}>Recycler {nombreDoublons} {nombreDoublons > 1 ? 'doublons' : 'doublon'} ?</Text>
+              <Text style={styles.texteFeuille}>Tu gardes un exemplaire de chaque carte. Aucune carte ne quitte ta collection.</Text>
+              <Pressable style={styles.boutonPrincipal} onPress={recyclerTout}>
+                <IconeEclat taille={18} />
+                <Text style={styles.texteBoutonPrincipal}>Recycler pour {gainRecyclage} Éclats</Text>
+              </Pressable>
+              <Pressable style={styles.boutonAnnuler} onPress={() => setConfirmerRecyclage(false)}>
+                <Text style={styles.texteBoutonAnnuler}>Annuler</Text>
               </Pressable>
             </Pressable>
-          )}
-        </Pressable>
-      </Modal>
-
-      {/* Confirmation du recyclage de tous les doublons */}
-      <Modal visible={confirmerRecyclage} transparent animationType="fade" onRequestClose={() => setConfirmerRecyclage(false)}>
-        <Pressable style={styles.fondModal} onPress={() => setConfirmerRecyclage(false)}>
-          <Pressable style={styles.feuille} onPress={() => {}}>
-            <Text style={styles.titreFeuille}>Recycler {nombreDoublons} {nombreDoublons > 1 ? 'doublons' : 'doublon'} ?</Text>
-            <Text style={styles.texteFeuille}>Tu gardes un exemplaire de chaque carte. Aucune carte ne quitte ta collection.</Text>
-            <Pressable style={styles.boutonPrincipal} onPress={recyclerTout}>
-              <IconeEclat taille={18} />
-              <Text style={styles.texteBoutonPrincipal}>Recycler pour {gainRecyclage} Éclats</Text>
-            </Pressable>
-            <Pressable style={styles.boutonAnnuler} onPress={() => setConfirmerRecyclage(false)}>
-              <Text style={styles.texteBoutonAnnuler}>Annuler</Text>
-            </Pressable>
           </Pressable>
-        </Pressable>
-      </Modal>
-    </View>
+        </Modal>
+      </View>
+    </EcranOnglet>
   )
 }

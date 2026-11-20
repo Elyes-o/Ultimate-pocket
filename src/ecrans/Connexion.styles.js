@@ -6,7 +6,6 @@ const LARGEUR_CARTE = 130
 const styles = StyleSheet.create({
   ecran: {
     flex: 1,
-    backgroundColor: couleurs.fond,
   },
 
   // Partie haute : les cartes en éventail

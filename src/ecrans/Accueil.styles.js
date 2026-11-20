@@ -18,6 +18,11 @@ const styles = StyleSheet.create({
     fontSize: tailles.grande,
     color: couleurs.texte,
     marginBottom: espaces.m,
+    // Onglet de classeur : une languette Lagon à gauche du titre
+    borderLeftWidth: 5,
+    borderLeftColor: couleurs.principale,
+    borderRadius: 3,
+    paddingLeft: 10,
   },
 })
 

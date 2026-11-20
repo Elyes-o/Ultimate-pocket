@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { couleurs, espaces, rayons, polices, tailles, ESPACE_BARRE_NAVIGATION } from '../theme'
+import { couleurs, espaces, rayons, polices, tailles, ESPACE_BARRE_NAVIGATION, reliefBouton } from '../theme'
 
 const styles = StyleSheet.create({
   ecran: {
@@ -156,6 +156,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: espaces.l,
     borderRadius: rayons.rond,
     backgroundColor: couleurs.principale,
+    ...reliefBouton,
   },
   texteBoutonRecycler: {
     fontFamily: polices.titre,
@@ -320,6 +321,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: espaces.s,
+    ...reliefBouton,
   },
   texteBoutonPrincipal: {
     fontFamily: polices.tresGrasse,

@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 18,
   },
   flash: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: '#FFFFFF',
   },
 })

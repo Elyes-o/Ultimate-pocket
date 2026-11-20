@@ -1,14 +1,26 @@
 import { StyleSheet } from 'react-native'
-import { polices } from '../theme'
+import { couleurs, polices } from '../theme'
 
 const styles = StyleSheet.create({
   conteneur: {
     alignItems: 'center',
   },
+  // Étiquette dorée, légèrement penchée, comme un autocollant sur un classeur
+  etiquette: {
+    paddingHorizontal: 12,
+    paddingVertical: 2,
+    borderRadius: 8,
+    backgroundColor: couleurs.ticket,
+    borderBottomWidth: 3,
+    borderBottomColor: couleurs.ticketFonce,
+    transform: [{ rotate: '-4deg' }],
+    marginBottom: -6,
+    zIndex: 1,
+  },
   surTitre: {
-    fontFamily: polices.tresGrasse,
-    fontSize: 14,
-    letterSpacing: 6,
+    fontFamily: polices.titre,
+    fontSize: 16,
+    color: couleurs.texte,
   },
   ligne: {
     flexDirection: 'row',

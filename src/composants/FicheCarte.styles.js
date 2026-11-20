@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { couleurs, espaces, rayons, polices, tailles, RATIO_CARTE } from '../theme'
+import { couleurs, espaces, rayons, polices, tailles, RATIO_CARTE, reliefBouton } from '../theme'
 
 export const LARGEUR_CARTE = 240
 
@@ -146,6 +146,7 @@ const styles = StyleSheet.create({
     marginTop: espaces.m,
     borderRadius: rayons.rond,
     backgroundColor: couleurs.principale,
+    ...reliefBouton,
   },
   texteBoutonRecycler: {
     fontFamily: polices.tresGrasse,

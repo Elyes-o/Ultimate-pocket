@@ -4,7 +4,6 @@ import { couleurs, espaces, rayons, polices, tailles } from '../theme'
 const styles = StyleSheet.create({
   ecran: {
     flex: 1,
-    backgroundColor: couleurs.fond,
     paddingHorizontal: espaces.xxl,
   },
   centre: {

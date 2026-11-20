@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { couleurs, espaces, rayons, polices, tailles, RATIO_CARTE } from '../theme'
+import { couleurs, espaces, rayons, polices, tailles, RATIO_CARTE, reliefBouton } from '../theme'
 
 const LARGEUR_CARTE = 240
 const HAUTEUR_CARTE = LARGEUR_CARTE / RATIO_CARTE
@@ -175,6 +175,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: espaces.s,
     marginBottom: espaces.m,
+    ...reliefBouton,
   },
   texteBoutonPrincipal: {
     fontFamily: polices.tresGrasse,
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
 
   // Flash blanc par-dessus tout l'écran
   flash: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: '#FFFFFF',
   },
 })

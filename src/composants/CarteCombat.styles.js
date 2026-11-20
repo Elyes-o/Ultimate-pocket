@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   voileRouge: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: '#E2483D',
   },
   onde: {

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { couleurs, espaces, rayons, polices, tailles, ombre } from '../theme'
+import { couleurs, espaces, rayons, polices, tailles, ombre, reliefBouton } from '../theme'
 
 const styles = StyleSheet.create({
   carte: {
@@ -36,7 +36,6 @@ const styles = StyleSheet.create({
   texteGratuit: {
     fontFamily: polices.tresGrasse,
     fontSize: 10,
-    letterSpacing: 0.8,
     color: couleurs.succes,
   },
   sousTitre: {
@@ -88,6 +87,7 @@ const styles = StyleSheet.create({
   },
   boutonOuvrir: {
     backgroundColor: couleurs.succes,
+    ...reliefBouton,
   },
   texteBoutonOuvrir: {
     fontFamily: polices.tresGrasse,

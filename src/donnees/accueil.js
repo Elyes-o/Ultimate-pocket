@@ -7,7 +7,7 @@ import { trouverCarte } from './cartes'
 export const diapositivesVitrine = [
   {
     id: 'nouvelle-collection',
-    badge: 'NOUVELLE COLLECTION',
+    badge: 'Nouvelle collection',
     titre: 'Breath of the Wild',
     sousTitre: '23 cartes à collectionner',
     degrade: ['#1E7A4C', '#4CC38A'],
@@ -17,7 +17,7 @@ export const diapositivesVitrine = [
   },
   {
     id: 'carte-du-moment',
-    badge: 'CARTE DU MOMENT',
+    badge: 'Carte du moment',
     titre: 'Master Sword',
     sousTitre: 'Rareté ★★★★',
     degrade: ['#2B3A8C', '#5B7CF5'],
@@ -26,7 +26,7 @@ export const diapositivesVitrine = [
   },
   {
     id: 'prodiges',
-    badge: 'ÉVÉNEMENT',
+    badge: 'Événement',
     titre: 'Les Prodiges',
     sousTitre: 'Daruk, Revali, Urbosa, Mipha',
     degrade: ['#8A2E5C', '#F06A7A'],
@@ -41,7 +41,7 @@ export const boosters = [
   {
     id: 'zelda-botw',
     nom: 'Hyrule',
-    univers: 'Zelda · Breath of the Wild',
+    univers: 'Zelda, Breath of the Wild',
     couleur: couleurs.zelda,
     visuel: require('../../assets/visuels/booster-hyrule.webp'),
     disponible: true,
@@ -52,7 +52,7 @@ export const boosters = [
   {
     id: 'zelda-legendaire',
     nom: 'Hyrule Légendaire',
-    univers: 'Zelda · Chances de rares augmentées',
+    univers: 'Plus de chances de cartes rares',
     couleur: '#C98A12',
     visuel: require('../../assets/visuels/booster-hyrule.webp'),
     disponible: true,

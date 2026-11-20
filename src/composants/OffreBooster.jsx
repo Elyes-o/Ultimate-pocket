@@ -24,7 +24,7 @@ export default function OffreBooster({ booster, quandOnVeutUnePub }) {
       <View style={styles.infos}>
         {booster.legendaire && (
           <View style={styles.etiquetteLegendaire}>
-            <Text style={styles.texteEtiquetteLegendaire}>LÉGENDAIRE</Text>
+            <Text style={styles.texteEtiquetteLegendaire}>Légendaire</Text>
           </View>
         )}
         <Text style={styles.nom}>{booster.nom}</Text>

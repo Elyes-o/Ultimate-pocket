@@ -1,10 +1,9 @@
 import { StyleSheet } from 'react-native'
-import { couleurs, espaces, rayons, polices, tailles, ombre, RATIO_CARTE } from '../theme'
+import { couleurs, espaces, rayons, polices, tailles, ombre, RATIO_CARTE, reliefBouton } from '../theme'
 
 const styles = StyleSheet.create({
   ecran: {
     flex: 1,
-    backgroundColor: '#EEF0F8',
   },
 
   // Score et tour
@@ -77,6 +76,39 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: espaces.m,
+  },
+  // Halo qui pulse autour de ta carte quand c'est ton tour (= « touche-moi »)
+  halo: {
+    position: 'absolute',
+    top: -6,
+    left: -6,
+    right: -6,
+    bottom: -6,
+    borderRadius: 12,
+    borderWidth: 3,
+    borderColor: couleurs.principale,
+  },
+  haloTutoriel: {
+    borderColor: couleurs.ticket,
+  },
+  indicationCarte: {
+    fontFamily: polices.tresGrasse,
+    fontSize: 12,
+    color: couleurs.principale,
+    marginTop: 4,
+  },
+  // Élément montré par le tutoriel
+  cibleTutoriel: {
+    borderWidth: 3,
+    borderColor: couleurs.ticket,
+    borderRadius: rayons.moyen,
+    opacity: 1,
+  },
+  texteTutoriel: {
+    fontFamily: polices.grasse,
+    fontSize: tailles.normale,
+    color: couleurs.texteSecondaire,
+    textAlign: 'center',
   },
   etiquetteActif: {
     width: 120,
@@ -151,56 +183,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#FFFFFF',
   },
-  grilleAttaques: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  boutonAttaque: {
-    flex: 1,
-    padding: 8,
-    borderRadius: rayons.moyen,
-    backgroundColor: couleurs.principaleClaire,
-    borderWidth: 1.5,
-    borderColor: '#D6D1FF',
-    gap: 2,
-  },
   boutonDesactive: {
     opacity: 0.4,
-  },
-  ligneAttaque: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  nomAttaque: {
-    flex: 1,
-    fontFamily: polices.tresGrasse,
-    fontSize: 13,
-    color: couleurs.texte,
-  },
-  cout: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 1,
-    paddingHorizontal: 7,
-    height: 22,
-    borderRadius: rayons.rond,
-    backgroundColor: '#F5A524',
-  },
-  texteCout: {
-    fontFamily: polices.titre,
-    fontSize: 13,
-    color: '#FFFFFF',
-  },
-  degatsAttaque: {
-    fontFamily: polices.titre,
-    fontSize: tailles.grande,
-    color: couleurs.principaleFoncee,
-  },
-  effetsAttaque: {
-    fontFamily: polices.normale,
-    fontSize: 10,
-    color: couleurs.texteSecondaire,
   },
   rangeeActions: {
     flexDirection: 'row',
@@ -229,21 +213,6 @@ const styles = StyleSheet.create({
     width: 14,
     height: 14 / RATIO_CARTE,
     borderRadius: 2,
-  },
-  boutonTalent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: espaces.m,
-    paddingVertical: 7,
-    borderRadius: rayons.moyen,
-    backgroundColor: couleurs.principaleClaire,
-  },
-  texteTalent: {
-    flex: 1,
-    fontFamily: polices.grasse,
-    fontSize: 12,
-    color: couleurs.principaleFoncee,
   },
 
   // Fenêtres (fiche de carte, choix du banc, résultat)
@@ -303,6 +272,7 @@ const styles = StyleSheet.create({
     backgroundColor: couleurs.principale,
     alignItems: 'center',
     justifyContent: 'center',
+    ...reliefBouton,
   },
   texteBoutonPrincipal: {
     fontFamily: polices.tresGrasse,

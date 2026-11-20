@@ -8,7 +8,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: espaces.l,
     paddingBottom: espaces.m,
-    backgroundColor: couleurs.fond,
   },
   profil: {
     flexDirection: 'row',

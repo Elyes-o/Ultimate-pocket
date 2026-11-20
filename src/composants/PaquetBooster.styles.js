@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   },
   // Voile sombre + cadenas pour les boosters pas encore disponibles
   voile: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     borderRadius: 6,
     backgroundColor: 'rgba(23, 30, 51, 0.55)',
     alignItems: 'center',

@@ -10,6 +10,7 @@ import { categorieCarte, combos } from '../src/donnees/combat'
 import { useJoueur } from '../src/donnees/JoueurContexte'
 import { couleurs } from '../src/theme'
 import styles from '../src/ecrans/Deck.styles'
+import FondJeu from '../src/composants/FondJeu'
 
 const TAILLE_DECK = 5
 
@@ -68,78 +69,80 @@ export default function EcranDeck() {
   }
 
   return (
-    <View style={[styles.ecran, { paddingTop: marges.top + 8 }]}>
-      <View style={styles.entete}>
-        <Pressable style={styles.boutonRetour} onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={22} color={couleurs.texte} />
-        </Pressable>
-        <Text style={styles.titre}>Mon deck</Text>
-        <View style={styles.boutonRetour} />
+    <FondJeu>
+      <View style={[styles.ecran, { paddingTop: marges.top + 8 }]}>
+        <View style={styles.entete}>
+          <Pressable style={styles.boutonRetour} onPress={() => router.back()}>
+            <Ionicons name="chevron-back" size={22} color={couleurs.texte} />
+          </Pressable>
+          <Text style={styles.titre}>Mon deck</Text>
+          <View style={styles.boutonRetour} />
+        </View>
+
+        <ScrollView contentContainerStyle={styles.contenu} showsVerticalScrollIndicator={false}>
+          <Text style={styles.titreSection}>
+            Combattants <Text style={styles.compteur}>{combattants.length} / {TAILLE_DECK}</Text>
+          </Text>
+          <Text style={styles.aide}>Le n°1 commence le combat. Touche une carte pour l'ajouter ou la retirer.</Text>
+          <View style={styles.grille}>
+            {combattantsPossedes.map((carte) => (
+              <CarteChoix
+                key={carte.numero}
+                numero={carte.numero}
+                choisie={combattants.includes(carte.numero)}
+                badge={combattants.indexOf(carte.numero) + 1}
+                quandOnAppuie={() => basculerCombattant(carte.numero)}
+              />
+            ))}
+          </View>
+
+          <Text style={styles.titreSection}>Supporter</Text>
+          <View style={styles.grille}>
+            {supportersPossedes.map((carte) => (
+              <CarteChoix
+                key={carte.numero}
+                numero={carte.numero}
+                choisie={supporter === carte.numero}
+                badge="✓"
+                quandOnAppuie={() => setSupporter(carte.numero)}
+              />
+            ))}
+          </View>
+
+          <Text style={styles.titreSection}>Objet</Text>
+          <View style={styles.grille}>
+            {objetsPossedes.map((carte) => (
+              <CarteChoix
+                key={carte.numero}
+                numero={carte.numero}
+                choisie={objet === carte.numero}
+                badge="✓"
+                quandOnAppuie={() => setObjet(carte.numero)}
+              />
+            ))}
+          </View>
+
+          <Text style={styles.titreSection}>Ultimes de ce deck</Text>
+          {combosDuDeck.length === 0 ? (
+            <Text style={styles.aide}>Aucun combo. Réunis par exemple Link + Zelda, ou les 4 Prodiges.</Text>
+          ) : (
+            combosDuDeck.map((combo) => (
+              <View key={combo.id} style={styles.ligneCombo}>
+                <Ionicons name="flash" size={16} color={couleurs.ticket} />
+                <Text style={styles.texteCombo}>
+                  {combo.nom} — {combo.ultime} ({combo.cout} Énergie)
+                </Text>
+              </View>
+            ))
+          )}
+        </ScrollView>
+
+        <View style={[styles.pied, { paddingBottom: marges.bottom + 16 }]}>
+          <Pressable style={[styles.boutonEnregistrer, !deckComplet && styles.boutonDesactive]} onPress={enregistrer} disabled={!deckComplet}>
+            <Text style={styles.texteEnregistrer}>{deckComplet ? 'Enregistrer le deck' : 'Deck incomplet'}</Text>
+          </Pressable>
+        </View>
       </View>
-
-      <ScrollView contentContainerStyle={styles.contenu} showsVerticalScrollIndicator={false}>
-        <Text style={styles.titreSection}>
-          Combattants <Text style={styles.compteur}>{combattants.length} / {TAILLE_DECK}</Text>
-        </Text>
-        <Text style={styles.aide}>Le n°1 commence le combat. Touche une carte pour l'ajouter ou la retirer.</Text>
-        <View style={styles.grille}>
-          {combattantsPossedes.map((carte) => (
-            <CarteChoix
-              key={carte.numero}
-              numero={carte.numero}
-              choisie={combattants.includes(carte.numero)}
-              badge={combattants.indexOf(carte.numero) + 1}
-              quandOnAppuie={() => basculerCombattant(carte.numero)}
-            />
-          ))}
-        </View>
-
-        <Text style={styles.titreSection}>Supporter</Text>
-        <View style={styles.grille}>
-          {supportersPossedes.map((carte) => (
-            <CarteChoix
-              key={carte.numero}
-              numero={carte.numero}
-              choisie={supporter === carte.numero}
-              badge="✓"
-              quandOnAppuie={() => setSupporter(carte.numero)}
-            />
-          ))}
-        </View>
-
-        <Text style={styles.titreSection}>Objet</Text>
-        <View style={styles.grille}>
-          {objetsPossedes.map((carte) => (
-            <CarteChoix
-              key={carte.numero}
-              numero={carte.numero}
-              choisie={objet === carte.numero}
-              badge="✓"
-              quandOnAppuie={() => setObjet(carte.numero)}
-            />
-          ))}
-        </View>
-
-        <Text style={styles.titreSection}>Ultimes de ce deck</Text>
-        {combosDuDeck.length === 0 ? (
-          <Text style={styles.aide}>Aucun combo. Réunis par exemple Link + Zelda, ou les 4 Prodiges.</Text>
-        ) : (
-          combosDuDeck.map((combo) => (
-            <View key={combo.id} style={styles.ligneCombo}>
-              <Ionicons name="flash" size={16} color={couleurs.ticket} />
-              <Text style={styles.texteCombo}>
-                {combo.nom} — {combo.ultime} ({combo.cout} Énergie)
-              </Text>
-            </View>
-          ))
-        )}
-      </ScrollView>
-
-      <View style={[styles.pied, { paddingBottom: marges.bottom + 16 }]}>
-        <Pressable style={[styles.boutonEnregistrer, !deckComplet && styles.boutonDesactive]} onPress={enregistrer} disabled={!deckComplet}>
-          <Text style={styles.texteEnregistrer}>{deckComplet ? 'Enregistrer le deck' : 'Deck incomplet'}</Text>
-        </Pressable>
-      </View>
-    </View>
+    </FondJeu>
   )
 }

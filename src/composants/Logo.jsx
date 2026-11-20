@@ -1,4 +1,4 @@
-// Logo texte du jeu : "ULTIMATE" en petit + "Pocket" en grand avec un cristal.
+// Logo texte du jeu : une étiquette dorée « Ultimate » collée de travers + « Pocket » en grand avec un cristal.
 import { View, Text } from 'react-native'
 import IconeEclat from './IconeEclat'
 import styles from './Logo.styles'
@@ -9,9 +9,9 @@ export default function Logo({ clair = false }) {
 
   return (
     <View style={styles.conteneur}>
-      <Text style={[styles.surTitre, { color: clair ? couleurs.texteInverse : couleurs.principale }]}>
-        ULTIMATE
-      </Text>
+      <View style={styles.etiquette}>
+        <Text style={styles.surTitre}>Ultimate</Text>
+      </View>
       <View style={styles.ligne}>
         <Text style={[styles.titre, { color: couleurTexte }]}>Pocket</Text>
         <IconeEclat taille={34} style={styles.cristal} />

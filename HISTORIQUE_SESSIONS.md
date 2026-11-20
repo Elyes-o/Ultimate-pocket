@@ -74,5 +74,13 @@
 - Grill de la Collection : doublons comptés et recyclables en Éclats, fiche complète avec carte inclinable,
   filtres (possession, rareté, catégorie), paliers de récompenses 25/50/75/100 % et titre « Maître d'Hyrule ».
 
+## Session du 2026-11-20 — attaque par la carte et tutoriel
+- Combat façon TCG Pocket : on touche sa carte active pour choisir une attaque ou faire une retraite.
+- Tutoriel guidé par Impa (15 étapes) : proposé à la 1re visite du Combat, rejouable, booster offert la 1re fois.
+
+## Session du 2026-11-20 — refonte visuelle « moins IA »
+- Nouvelle direction : fond blanc à vagues de lignes turquoise → rose (modèle fourni par Elyes), Lagon + Or, police M PLUS Rounded 1c, boutons en relief,
+  barre du bas avec bouton Combat central, logo à étiquette dorée. Majuscules et « · » retirés des textes.
+
 ## Règle de mise à jour
 À chaque nouvelle session : ajouter une section datée ici, puis mettre à jour `CLAUDE.md` si une décision change.

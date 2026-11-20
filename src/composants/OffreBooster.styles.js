@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { couleurs, espaces, rayons, polices, tailles, ombre } from '../theme'
+import { couleurs, espaces, rayons, polices, tailles, ombre, reliefBouton } from '../theme'
 
 const styles = StyleSheet.create({
   carte: {
@@ -32,7 +32,6 @@ const styles = StyleSheet.create({
   texteEtiquetteLegendaire: {
     fontFamily: polices.titre,
     fontSize: 10,
-    letterSpacing: 1,
     color: '#FFFFFF',
   },
   nom: {
@@ -59,6 +58,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: espaces.l,
     borderRadius: rayons.rond,
     backgroundColor: couleurs.principale,
+    ...reliefBouton,
   },
   texteBoutonEclats: {
     fontFamily: polices.tresGrasse,

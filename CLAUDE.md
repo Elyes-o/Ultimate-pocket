@@ -25,6 +25,26 @@ Proche de l'écran de collection de Pokémon TCG Pocket (clair, arrondi, onglets
 navigation en bas, grille de cartes) mais en version moderne et personnelle.
 Menus très aboutis, avec de la publicité INTÉGRÉE au jeu (panneau publicitaire, bandeaux).
 
+### Refonte « moins IA » (2026-11-20) : « classeur de collectionneur »
+- Fond (choisi par Elyes d'après un modèle) : blanc bleuté `#F8FAFC` avec deux faisceaux de fines lignes
+  turquoise → rose (haut gauche, bas droite), image ORIGINALE `assets/visuels/fond-vagues.png` (900 × 1950,
+  dessinée par un script Python). Chaque écran commence par `<FondJeu>` (les onglets par `<EcranOnglet>` =
+  fond + `BandeauHaut`), qui est OPAQUE. La navigation, elle, reste TRANSPARENTE (thème transparent dans
+  `app/_layout.jsx`, `contentStyle` et `sceneStyle` transparents).
+- **PIÈGE (vraie cause du « on ne voit que le fond » sur iPhone)** : `StyleSheet.absoluteFillObject` N'EXISTE PLUS
+  dans React Native 0.88. Le décomposer (`...StyleSheet.absoluteFillObject`) ne fait rien sur téléphone : l'élément
+  n'est plus en position absolue et pousse tout l'écran vers le bas. Toujours utiliser `...StyleSheet.absoluteFill`.
+  (Sur le web, react-native-web l'a encore : le bug ne se voit QUE sur téléphone.)
+- Piège : la barre d'onglets perso reçoit `emitter` et `navigateToTab` (PAS `navigation`) dans cette version d'expo-router.
+- Couleurs : encre `#1B2B48`, Lagon `#0FA3C2` (actions, remplace le violet), Or `#F2B21B` (rare, gains, Tickets),
+  Corail `#F0584A` (danger). Police **M PLUS Rounded 1c** (ronde, jeu mobile japonais).
+- Relief : panneaux avec une tranche bleutée en bas (`ombre`), boutons pleins avec une tranche foncée (`reliefBouton`).
+- Signature : `BarreOnglets` (barre du bas dessinée pour le jeu) avec un gros bouton rond **Combat** au centre.
+- Titres de section avec une languette Lagon à gauche (onglet de classeur). Logo : étiquette dorée « Ultimate »
+  penchée au-dessus de « Pocket ».
+- À éviter (ça fait « généré ») : étiquettes en MAJUSCULES espacées, textes « A · B », un violet générique,
+  la même ombre grise floue sous chaque carte.
+
 ## Parcours de l'application (vue d'ensemble)
 1. Écran de chargement
 2. Page de connexion / inscription (Clerk : Google, Apple, etc.)
@@ -81,6 +101,19 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
   plus faible) ; l'échange gratuit après l'attaque de Revali n'est pas codé.
 - Rééquilibrage : Colère des Prodiges de Link (Prodige) = +20 par Prodige (au lieu de +40), max 260.
 
+### Attaquer en touchant sa carte + tutoriel (2026-11-20)
+- Comme dans Pokémon TCG Pocket : on **touche sa carte active** (halo qui pulse + « Touche ta carte pour attaquer »)
+  → `MenuCarteActive` s'ouvre : PV, jauge d'Énergie (aperçu du coût), attaques (grisées avec la raison :
+  « Il manque 2 ⚡ », « Fatigué »), Talent, bouton **Retraite** (→ choix du remplaçant). Toucher une attaque frappe.
+- Le panneau du bas ne garde que la jauge, les Ultimes, « Se concentrer », le Supporter et l'Objet.
+- **Tutoriel** (`/partie?niveau=tutoriel`, données dans `src/donnees/tutoriel.js`) : combat guidé par Impa
+  (`BulleTutoriel`) contre un « Mannequin » qui ne fait que se concentrer. Decks et PV fixés pour que tout tombe
+  juste : attaque → KO, retraite vers Riju, concentration, Terry + Tablette Sheikah, Ultime Foudre du Désert,
+  puis le joueur finit seul. Pendant une étape, seul l'élément montré (bord doré) est utilisable.
+- Proposé dans une fenêtre à la 1re visite de l'onglet Combat, rejouable depuis la carte « Apprends à combattre ».
+  1re réussite : booster Hyrule offert (s'ouvre directement). Pas de stats ni d'Éclats. `JoueurContexte.tutoriel`
+  = `{ propose, termine }`.
+
 ## Règles de jeu connues (cartes)
 - Format de carte type Pokémon : PV, attaque(s), type, faiblesse, coût de retraite, plus une ENDURANCE.
 - Jauge d'ultime et raids contre un boss.
@@ -112,7 +145,7 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
 - Navigation : **expo-router** (un fichier dans `app/` = un écran).
   - `app/index.jsx` chargement, `app/connexion.jsx`, `app/profil.jsx`
   - `app/(onglets)/` les 5 onglets (accueil, boutique, combat, collection, communaute) + `_layout.jsx` (barre du bas)
-- `src/theme.js` : TOUTES les couleurs, espacements, arrondis, polices (Nunito). Ne pas mettre de couleur en dur ailleurs.
+- `src/theme.js` : TOUTES les couleurs, espacements, arrondis, polices (M PLUS Rounded 1c), relief. Ne pas mettre de couleur en dur ailleurs.
 - `src/composants/` : morceaux réutilisables (BandeauHaut, Vitrine, BoosterQuotidien, PaquetBooster, CarteBooster, CarteCollection, EcranBientot, Logo).
 - `src/ecrans/` : styles des écrans de `app/`. `src/donnees/` : cartes, contenu de l'accueil, JoueurContexte (faux joueur).
 - Styles : React Native n'utilise pas de fichiers `.css` ; chaque composant a son fichier de styles

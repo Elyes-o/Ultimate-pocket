@@ -7,6 +7,7 @@ import Logo from '../src/composants/Logo'
 import { astuces } from '../src/donnees/accueil'
 import { useJoueur } from '../src/donnees/JoueurContexte'
 import styles from '../src/ecrans/Chargement.styles'
+import FondJeu from '../src/composants/FondJeu'
 
 const DUREE_CHARGEMENT = 2800 // en millisecondes
 const DUREE_ASTUCE = 1400
@@ -44,18 +45,20 @@ export default function EcranChargement() {
   const largeurBarre = progression.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] })
 
   return (
-    <View style={styles.ecran}>
-      <View style={styles.centre}>
-        <Logo />
-      </View>
-
-      <View style={styles.bas}>
-        <View style={styles.barreFond}>
-          <Animated.View style={[styles.barrePleine, { width: largeurBarre }]} />
+    <FondJeu>
+      <View style={styles.ecran}>
+        <View style={styles.centre}>
+          <Logo />
         </View>
-        <Text style={styles.astuceTitre}>ASTUCE</Text>
-        <Text style={styles.astuce}>{astuces[numeroAstuce]}</Text>
+
+        <View style={styles.bas}>
+          <View style={styles.barreFond}>
+            <Animated.View style={[styles.barrePleine, { width: largeurBarre }]} />
+          </View>
+          <Text style={styles.astuceTitre}>ASTUCE</Text>
+          <Text style={styles.astuce}>{astuces[numeroAstuce]}</Text>
+        </View>
       </View>
-    </View>
+    </FondJeu>
   )
 }

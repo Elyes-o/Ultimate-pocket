@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { couleurs, espaces, rayons, polices, tailles, ombre, ESPACE_BARRE_NAVIGATION, RATIO_CARTE } from '../theme'
+import { couleurs, espaces, rayons, polices, tailles, ombre, ESPACE_BARRE_NAVIGATION, RATIO_CARTE, reliefBouton } from '../theme'
 
 const styles = StyleSheet.create({
   contenu: {
@@ -69,6 +69,11 @@ const styles = StyleSheet.create({
     fontFamily: polices.titre,
     fontSize: tailles.grande,
     color: couleurs.texte,
+    // Onglet de classeur : une languette Lagon à gauche du titre
+    borderLeftWidth: 5,
+    borderLeftColor: couleurs.principale,
+    borderRadius: 3,
+    paddingLeft: 10,
   },
   statistiques: {
     fontFamily: polices.tresGrasse,
@@ -125,6 +130,120 @@ const styles = StyleSheet.create({
   texteBientot: {
     fontFamily: polices.grasse,
     fontSize: 12,
+    color: couleurs.texteSecondaire,
+  },
+
+  // Tutoriel
+  carteTutoriel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: espaces.m,
+    padding: espaces.m,
+    marginBottom: espaces.l,
+    borderRadius: rayons.grand,
+    backgroundColor: '#141A2E',
+    borderWidth: 2,
+    borderColor: couleurs.ticket,
+  },
+  carteTutorielFaite: {
+    backgroundColor: couleurs.surface,
+    borderColor: couleurs.bordure,
+  },
+  portraitImpa: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: couleurs.ticket,
+    backgroundColor: '#2A3150',
+  },
+  // On agrandit la carte pour ne garder que le visage dans le rond
+  imageImpa: {
+    position: 'absolute',
+    width: 114,
+    height: 161,
+    left: -31,
+    top: -29,
+  },
+  grandPortrait: {
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+  },
+  grandeImageImpa: {
+    width: 185,
+    height: 260,
+    left: -50,
+    top: -46,
+  },
+  nomTutoriel: {
+    fontFamily: polices.titre,
+    fontSize: tailles.moyenne,
+    color: couleurs.texteInverse,
+  },
+  nomTutorielFait: {
+    color: couleurs.texte,
+  },
+  detailTutoriel: {
+    fontFamily: polices.grasse,
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.7)',
+  },
+  detailTutorielFait: {
+    color: couleurs.texteSecondaire,
+  },
+  fondModal: {
+    flex: 1,
+    backgroundColor: 'rgba(10, 14, 30, 0.55)',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  feuille: {
+    width: '100%',
+    maxWidth: 480,
+    backgroundColor: couleurs.surface,
+    borderTopLeftRadius: rayons.enorme,
+    borderTopRightRadius: rayons.enorme,
+    padding: espaces.xl,
+    paddingBottom: espaces.xxl,
+    alignItems: 'center',
+  },
+  titreFeuille: {
+    fontFamily: polices.titre,
+    fontSize: tailles.grande,
+    color: couleurs.texte,
+    marginTop: espaces.l,
+  },
+  texteFeuille: {
+    fontFamily: polices.normale,
+    fontSize: tailles.normale,
+    color: couleurs.texteSecondaire,
+    textAlign: 'center',
+    marginTop: espaces.xs,
+    marginBottom: espaces.xl,
+  },
+  boutonPrincipal: {
+    width: '100%',
+    height: 54,
+    borderRadius: rayons.moyen,
+    backgroundColor: couleurs.principale,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...reliefBouton,
+  },
+  texteBoutonPrincipal: {
+    fontFamily: polices.tresGrasse,
+    fontSize: tailles.moyenne,
+    color: couleurs.texteInverse,
+  },
+  boutonAnnuler: {
+    paddingVertical: espaces.m,
+    marginTop: espaces.xs,
+  },
+  texteAnnuler: {
+    fontFamily: polices.grasse,
+    fontSize: tailles.normale,
     color: couleurs.texteSecondaire,
   },
 })

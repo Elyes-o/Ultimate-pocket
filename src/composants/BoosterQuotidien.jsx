@@ -54,7 +54,7 @@ export default function BoosterQuotidien() {
 
       <View style={styles.infos}>
         <View style={styles.etiquetteGratuit}>
-          <Text style={styles.texteGratuit}>GRATUIT</Text>
+          <Text style={styles.texteGratuit}>Gratuit</Text>
         </View>
         <Text style={styles.titre}>Booster quotidien</Text>
 
@@ -77,7 +77,7 @@ export default function BoosterQuotidien() {
             disabled={tickets === 0}
           >
             <Ionicons name="ticket" size={16} color={couleurs.ticket} />
-            <Text style={styles.texteBoutonTicket}>Utiliser un ticket · -1 h</Text>
+            <Text style={styles.texteBoutonTicket}>Utiliser un Ticket : -1 h</Text>
           </Pressable>
         )}
       </View>

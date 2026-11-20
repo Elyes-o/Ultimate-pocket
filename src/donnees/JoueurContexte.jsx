@@ -33,6 +33,7 @@ function partieDeDepart() {
     // Nombre d'exemplaires de chaque carte possédée, ex. { 1: 1, 9: 3 } (3 = la carte + 2 doublons)
     exemplaires: Object.fromEntries(cartesZelda.filter((carte) => carte.possedee).map((carte) => [carte.numero, 1])),
     paliersReclames: [], // paliers de collection déjà réclamés, ex. ['p25']
+    tutoriel: { propose: false, termine: false }, // tutoriel de combat
     pubsParBooster: {}, // ex. { 'zelda-botw': 2 }
     pubsTicketsDuJour: { jour: dateDuJour(), nombre: 0 },
     deck: null, // { combattants: [5 numéros], supporter, objet } ; null = deck automatique
@@ -58,6 +59,7 @@ export function JoueurFournisseur({ children }) {
   const [boosterPretA, setBoosterPretA] = useState(depart.boosterPretA)
   const [exemplaires, setExemplaires] = useState(depart.exemplaires)
   const [paliersReclames, setPaliersReclames] = useState(depart.paliersReclames)
+  const [tutoriel, setTutoriel] = useState(depart.tutoriel)
   const [pubsParBooster, setPubsParBooster] = useState(depart.pubsParBooster)
   const [pubsTicketsDuJour, setPubsTicketsDuJour] = useState(depart.pubsTicketsDuJour)
   const [deck, setDeck] = useState(depart.deck)
@@ -82,6 +84,7 @@ export function JoueurFournisseur({ children }) {
     setBoosterPretA(complete.boosterPretA)
     setExemplaires(complete.exemplaires)
     setPaliersReclames(complete.paliersReclames)
+    setTutoriel(complete.tutoriel)
     setPubsParBooster(complete.pubsParBooster)
     setPubsTicketsDuJour(complete.pubsTicketsDuJour)
     setDeck(complete.deck)
@@ -109,7 +112,7 @@ export function JoueurFournisseur({ children }) {
   // 2. À chaque changement : on sauvegarde la partie.
   // On attend d'avoir chargé, sinon on écraserait la sauvegarde avec les valeurs de départ.
   const partie = {
-    pseudo, avatar, eclats, tickets, boosterPretA, exemplaires, paliersReclames,
+    pseudo, avatar, eclats, tickets, boosterPretA, exemplaires, paliersReclames, tutoriel,
     pubsParBooster, pubsTicketsDuJour, deck, statistiques, parametres,
   }
   useEffect(() => {
@@ -308,6 +311,20 @@ export function JoueurFournisseur({ children }) {
     return { eclats: niveau.recompense, ticket: premiereVictoireDuJour }
   }
 
+  // ---------- Tutoriel ----------
+
+  // La proposition du tutoriel (1re visite de l'onglet Combat) a été montrée
+  function marquerTutorielPropose() {
+    setTutoriel((ancien) => ({ ...ancien, propose: true }))
+  }
+
+  // Tutoriel gagné. Renvoie true la 1re fois (le booster offert n'est donné qu'une fois).
+  function terminerTutoriel() {
+    const premiereFois = !tutoriel.termine
+    setTutoriel({ propose: true, termine: true })
+    return premiereFois
+  }
+
   // ---------- Profil ----------
 
   // Change le pseudo (espaces retirés, longueur limitée, jamais vide)
@@ -346,6 +363,9 @@ export function JoueurFournisseur({ children }) {
     etatPalier,
     reclamerPalier,
     titre,
+    tutoriel,
+    marquerTutorielPropose,
+    terminerTutoriel,
     pubsParBooster,
     pubsTicketsRestantes,
     recompenserPubTicket,

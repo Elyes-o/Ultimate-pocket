@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { couleurs, espaces, rayons, polices, tailles, ESPACE_BARRE_NAVIGATION } from '../theme'
+import { couleurs, espaces, rayons, polices, tailles, ESPACE_BARRE_NAVIGATION, reliefBouton } from '../theme'
 
 const styles = StyleSheet.create({
   contenu: {
@@ -12,6 +12,11 @@ const styles = StyleSheet.create({
     color: couleurs.texte,
     marginTop: espaces.m,
     marginBottom: espaces.m,
+    // Onglet de classeur : une languette Lagon à gauche du titre
+    borderLeftWidth: 5,
+    borderLeftColor: couleurs.principale,
+    borderRadius: 3,
+    paddingLeft: 10,
   },
   ligneTitre: {
     flexDirection: 'row',
@@ -58,6 +63,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: espaces.m,
     borderRadius: rayons.rond,
     backgroundColor: couleurs.ticket,
+    ...reliefBouton,
   },
   boutonDesactive: {
     opacity: 0.4,

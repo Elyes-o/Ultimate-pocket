@@ -1,10 +1,9 @@
 import { StyleSheet } from 'react-native'
-import { couleurs, espaces, rayons, polices, tailles, RATIO_CARTE } from '../theme'
+import { couleurs, espaces, rayons, polices, tailles, RATIO_CARTE, reliefBouton } from '../theme'
 
 const styles = StyleSheet.create({
   ecran: {
     flex: 1,
-    backgroundColor: couleurs.fond,
   },
   entete: {
     flexDirection: 'row',
@@ -36,6 +35,11 @@ const styles = StyleSheet.create({
     color: couleurs.texte,
     marginTop: espaces.l,
     marginBottom: espaces.xs,
+    // Onglet de classeur : une languette Lagon à gauche du titre
+    borderLeftWidth: 5,
+    borderLeftColor: couleurs.principale,
+    borderRadius: 3,
+    paddingLeft: 10,
   },
   compteur: {
     color: couleurs.principale,
@@ -116,6 +120,7 @@ const styles = StyleSheet.create({
     backgroundColor: couleurs.principale,
     alignItems: 'center',
     justifyContent: 'center',
+    ...reliefBouton,
   },
   boutonDesactive: {
     opacity: 0.4,

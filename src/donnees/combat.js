@@ -225,7 +225,7 @@ export function texteUltime(combo) {
   if (combo.effets && combo.effets.energieAdverse) morceaux.push('-' + combo.effets.energieAdverse + ' ⚡ adverse')
   if (combo.effets && combo.effets.ignoreBouclier) morceaux.push('perce boucliers')
   if (combo.effets && combo.effets.protectionTotale) morceaux.push('invincible 1 tour')
-  return morceaux.join(' · ')
+  return morceaux.join(', ')
 }
 
 // Decks des bots (numéros de cartes)
@@ -288,7 +288,7 @@ export function texteEffets(effets) {
   if (effets.critique) morceaux.push('Critique +' + effets.critique.bonus)
   if (effets.bonusParProdige) morceaux.push('+' + effets.bonusParProdige + '/Prodige')
   if (effets.fatigue) morceaux.push('Fatigue')
-  return morceaux.join(' · ')
+  return morceaux.join(', ')
 }
 
 // Noms affichés des types

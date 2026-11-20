@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { couleurs, espaces, rayons, polices, tailles } from '../theme'
+import { couleurs, espaces, rayons, polices, tailles, reliefBouton } from '../theme'
 
 const styles = StyleSheet.create({
   fondModal: {
@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: espaces.s,
+    ...reliefBouton,
   },
   boutonDesactive: {
     opacity: 0.4,

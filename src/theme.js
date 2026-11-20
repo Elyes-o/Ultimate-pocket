@@ -1,34 +1,43 @@
 // Thème de l'application : TOUTES les couleurs, tailles et polices sont ici.
 // Pour changer le look du jeu, on modifie ce fichier et pas les écrans.
+//
+// Direction artistique (2026-11-20) : « classeur de collectionneur ».
+//   - fond blanc bleuté avec deux faisceaux de fines lignes turquoise → rose (comme TCG Pocket), panneaux blancs « en relief »
+//   - encre bleu nuit pour le texte, Lagon pour les actions, Or pour tout ce qui est rare ou gagné
+//   - police M PLUS Rounded 1c (ronde, typique des jeux mobiles japonais)
+//   - boutons de jeu : une tranche plus foncée en bas, comme un vrai bouton qu'on enfonce
 
 export const couleurs = {
   // Fonds
-  fond: '#F2F4FA', // fond général, gris très clair un peu bleuté
-  surface: '#FFFFFF', // cartes, bandeaux, barre de navigation
-  surfaceDouce: '#E8ECF5', // zones secondaires (silhouettes, barres vides)
+  fond: '#F8FAFC', // fond général : blanc bleuté (les vagues de lignes sont dessinées dessus)
+  surface: '#FFFFFF', // panneaux, bandeaux, barre de navigation
+  surfaceDouce: '#E7EFF5', // zones secondaires (silhouettes, barres vides)
+  tranche: '#CFDDE8', // « épaisseur » sous les panneaux (relief)
 
   // Textes
-  texte: '#171E33', // texte principal (bleu nuit presque noir)
-  texteSecondaire: '#6A7390', // descriptions, légendes
+  texte: '#1B2B48', // encre : texte principal (bleu nuit)
+  texteSecondaire: '#5E7089', // descriptions, légendes
   texteInverse: '#FFFFFF', // texte sur fond foncé
 
   // Couleur principale du jeu (boutons, onglet actif)
-  principale: '#5B4CF5',
-  principaleFoncee: '#3F2FD8',
-  principaleClaire: '#ECEAFF',
+  principale: '#0FA3C2', // Lagon
+  principaleFoncee: '#0A7891', // tranche des boutons, textes sur fond clair
+  principaleClaire: '#DDF3F8',
 
   // Monnaie et récompenses
   eclat: '#1FB6E6', // les Éclats (cristal bleu)
-  ticket: '#F5A524', // les Tickets (orange doré)
-  etoile: '#F7B731', // étoiles de rareté
-  succes: '#22B573', // booster prêt
+  ticket: '#F2B21B', // Or : Tickets, récompenses, rare
+  ticketFonce: '#C98A06',
+  etoile: '#F2B21B', // étoiles de rareté
+  succes: '#21A86B', // booster prêt
+  danger: '#F0584A', // Corail : PV bas, défaite
 
   // Univers
   zelda: '#2F9E62',
   onePiece: '#E2483D',
   hollowKnight: '#3B4A6B',
 
-  bordure: '#E1E5EF',
+  bordure: '#D9E4EC',
 }
 
 // Espacements : toujours des multiples de 4 pour un rendu régulier
@@ -50,12 +59,12 @@ export const rayons = {
   rond: 999,
 }
 
-// Polices (Nunito : ronde et lisible, adaptée à un jeu)
+// Polices : M PLUS Rounded 1c (ronde, lisible, ambiance jeu mobile japonais)
 export const polices = {
-  normale: 'Nunito_600SemiBold',
-  grasse: 'Nunito_700Bold',
-  tresGrasse: 'Nunito_800ExtraBold',
-  titre: 'Nunito_900Black',
+  normale: 'MPLUSRounded1c_500Medium',
+  grasse: 'MPLUSRounded1c_700Bold',
+  tresGrasse: 'MPLUSRounded1c_800ExtraBold',
+  titre: 'MPLUSRounded1c_900Black',
 }
 
 // Tailles de texte
@@ -67,13 +76,21 @@ export const tailles = {
   titre: 28,
 }
 
-// Ombre douce réutilisable (cartes, bandeaux)
+// Relief des panneaux : une tranche bleutée en bas + une ombre courte teintée (pas un flou gris générique)
 export const ombre = {
-  shadowColor: '#1B2440',
-  shadowOpacity: 0.08,
-  shadowRadius: 16,
-  shadowOffset: { width: 0, height: 6 },
-  elevation: 4,
+  borderBottomWidth: 3,
+  borderBottomColor: '#CFDDE8',
+  shadowColor: '#24577A',
+  shadowOpacity: 0.1,
+  shadowRadius: 6,
+  shadowOffset: { width: 0, height: 3 },
+  elevation: 3,
+}
+
+// Relief des boutons de jeu (à ajouter au style d'un bouton plein)
+export const reliefBouton = {
+  borderBottomWidth: 4,
+  borderBottomColor: 'rgba(0, 0, 0, 0.22)',
 }
 
 // Place à laisser en bas des écrans : la barre de navigation flotte par-dessus
