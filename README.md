@@ -4,7 +4,7 @@ Jeu de cartes à collectionner multi-univers, inspiré de Pokémon TCG Pocket.
 Collectionne des cartes de Zelda, One Piece, Hollow Knight et plus encore, ouvre des boosters,
 construis ton deck et affronte un bot, un boss ou un ami.
 
-> Statut : conception. Voir `CLAUDE.md` pour le résumé complet et `docs/` pour le détail.
+> Statut : en développement (menus, boutique, boosters, combat contre 5 bots). Voir `CLAUDE.md` pour le résumé complet.
 
 ## Fonctionnalités prévues
 - Écran de chargement et connexion / inscription avec Clerk (Google, Apple, etc.)
@@ -19,8 +19,23 @@ construis ton deck et affronte un bot, un boss ou un ami.
 Barre en bas : **Accueil | Boutique | Combat | Collection | Communauté**
 Le profil s'ouvre depuis l'icône en haut de l'accueil.
 
+## Lancer le projet
+1. `npm install`
+2. **Ajouter les images des cartes** (elles ne sont pas sur GitHub, voir plus bas)
+3. `npm start` (QR code pour Expo Go) ou `npm run web`
+
+## Images des cartes (non publiées)
+Les illustrations des 23 cartes Zelda ne nous appartiennent pas : elles ne sont **pas** dans ce dépôt
+(dossier `images/` ignoré par git). Pour faire tourner le jeu, place-les dans `images/` à la racine,
+avec ces noms (format `.webp`, 400 × 560) :
+`bokoblin, daruk, gardien, hinox, impa, le-roi-d-hyrule, link, link-2, lynel, master-sword, mipha,
+paravoile, pru-ha, revali, riju, sidon, sooga, tablette-sheikah, teba, terry, urbosa, yunobo, zelda`.
+
+Les autres visuels (`assets/`), les bruitages et les musiques sont des créations originales du projet.
+
 ## Documentation
 - `CLAUDE.md` : tout ce qu'on sait sur l'application (lu à chaque session)
-- `docs/ECRANS.md` : détail de chaque écran
-- `docs/MODES_DE_JEU.md` : modes de combat et règles des cartes
-- `docs/HISTORIQUE_SESSIONS.md` : ce qui a été décidé, session par session
+- `ECRANS.md` : détail de chaque écran
+- `MODES_DE_JEU.md` : modes de combat et règles du combat
+- `CARTES_COMBAT.md` : fiche de combat de chaque carte et combos
+- `HISTORIQUE_SESSIONS.md` : ce qui a été décidé, session par session

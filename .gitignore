@@ -4,3 +4,6 @@ dist
 .DS_Store
 *.log
 .env*
+
+# Images des cartes (propriété de leurs auteurs) : gardées en local, jamais publiées
+images/
