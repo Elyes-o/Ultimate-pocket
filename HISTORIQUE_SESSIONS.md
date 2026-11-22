@@ -82,5 +82,10 @@
 - Nouvelle direction : fond blanc à vagues de lignes turquoise → rose (modèle fourni par Elyes), Lagon + Or, police M PLUS Rounded 1c, boutons en relief,
   barre du bas avec bouton Combat central, logo à étiquette dorée. Majuscules et « · » retirés des textes.
 
+## Session du 2026-11-22 — collection Tears of the Kingdom
+- 34 cartes TOTK intégrées (fiches de combat, 5 combos), nouvelle rareté SECRÈTE au logo arc-en-ciel,
+  booster « Royaume céleste », sélecteur de collection dans l'onglet Collection.
+- Règle d'Énergie changée juste avant : se concentrer = +1 ⚡, recevoir un coup ne donne plus rien.
+
 ## Règle de mise à jour
 À chaque nouvelle session : ajouter une section datée ici, puis mettre à jour `CLAUDE.md` si une décision change.

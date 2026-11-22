@@ -2,12 +2,12 @@
 // Chaque fonction reçoit l'état du combat et renvoie un NOUVEL état (on ne modifie jamais l'ancien).
 // Règles : MODES_DE_JEU.md. Données des cartes : src/donnees/combat.js.
 import { trouverCarte } from '../donnees/cartes'
-import { fichesCombattants, fichesSupporters, fichesObjets, combos, numerosProdiges } from '../donnees/combat'
+import { fichesCombattants, fichesSupporters, fichesObjets, combos, numerosProdiges, numerosSages } from '../donnees/combat'
 
 export const ENERGIE_MAX = 10
 const ENERGIE_DEPART = 3
 const ENERGIE_PAR_TOUR = 2
-const ENERGIE_CONCENTRATION = 2
+export const ENERGIE_CONCENTRATION = 1 // se concentrer : +1 Énergie (décision d'Elyes, 2026-11-20)
 export const KO_POUR_GAGNER = 3
 
 // Copie complète d'un objet (pour ne jamais modifier l'ancien état)
@@ -40,6 +40,7 @@ function creerCombattant(numero) {
     bloque: false, // ne peut pas changer de place ce tour
     fatigue: false, // ne pourra pas attaquer à son prochain tour
     fatigueActive: false, // ne peut pas attaquer CE tour
+    moitieDegats: fiche.talent ? fiche.talent.id === 'bouclierDarukEx' : false, // Talent passif de Daruk ex
   }
 }
 
@@ -56,6 +57,8 @@ function creerCamp(nom, deck, energieDepart) {
     bonusProchaineAttaque: 0, // Master Sword
     talentAdverseDesactive: false, // Tablette Sheikah (posée par l'adversaire)
     retraiteGratuiteCeTour: false, // Talent de Revali
+    reductionCoutCeTour: 0, // Énergie en moins sur la prochaine attaque ou retraite de ce tour (Babil, Yunobo, Pru'ha TOTK)
+    ignoreBouclierProchaine: false, // la prochaine attaque perce les Boucliers (Amalgame, Master Sword TOTK)
   }
 }
 
@@ -107,6 +110,10 @@ function blesser(combattant, degats, ignoreBouclier) {
     degatsFinaux = degatsFinaux - combattant.bouclier - combattant.bouclierPermanent
   }
   degatsFinaux = Math.max(0, degatsFinaux)
+  // Talent passif de Daruk ex : il ne subit que la moitié des dégâts
+  if (combattant.moitieDegats) {
+    degatsFinaux = Math.floor(degatsFinaux / 2)
+  }
   combattant.pv = Math.max(0, combattant.pv - degatsFinaux)
   return degatsFinaux
 }
@@ -179,7 +186,9 @@ export function actionsPossibles(etat, idCamp) {
   const actif = camp.actif
   const aSonTour = etat.tour === idCamp && !etat.gagnant && !etat.remplacementEnAttente && actif !== null
   const fiche = actif ? fichesCombattants[actif.numero] : null
-  const coutRetraite = actif && (actif.retraiteGratuite || camp.retraiteGratuiteCeTour) ? 0 : actif ? actif.retraite : 0
+  const reduction = camp.reductionCoutCeTour
+  const coutRetraiteNormal = actif && (actif.retraiteGratuite || camp.retraiteGratuiteCeTour) ? 0 : actif ? actif.retraite : 0
+  const coutRetraite = Math.max(0, coutRetraiteNormal - reduction)
 
   return {
     aSonTour,
@@ -187,7 +196,7 @@ export function actionsPossibles(etat, idCamp) {
       ? fiche.attaques.map((attaque, index) => ({
           index,
           attaque,
-          possible: aSonTour && !actif.fatigueActive && camp.energie >= attaque.cout,
+          possible: aSonTour && !actif.fatigueActive && camp.energie >= Math.max(0, attaque.cout - reduction),
         }))
       : [],
     peutSeConcentrer: aSonTour,
@@ -197,7 +206,8 @@ export function actionsPossibles(etat, idCamp) {
     objetDispo: aSonTour && !camp.objet.utilise,
     talent: fiche && fiche.talent ? fiche.talent : null,
     talentDispo:
-      aSonTour && fiche !== null && !!fiche.talent && !actif.talentUtilise && !camp.talentAdverseDesactive,
+      aSonTour && fiche !== null && !!fiche.talent && !fiche.talent.passif && !actif.talentUtilise && !camp.talentAdverseDesactive,
+    reductionCout: reduction,
     ultimes: aSonTour ? ultimesDisponibles(etat, idCamp) : [],
   }
 }
@@ -211,6 +221,7 @@ function passerAuTourSuivant(etat) {
     combattant.fatigueActive = false
   }
   campQuiFinit.retraiteGratuiteCeTour = false
+  campQuiFinit.reductionCoutCeTour = 0
 
   etat.tour = adversaireDe(etat.tour)
   etat.numeroTour = etat.numeroTour + 1
@@ -238,10 +249,20 @@ function frapper(etat, idCamp, degatsDeBase, effets, nomAttaque) {
 
   let degats = degatsDeBase + camp.bonusProchaineAttaque
   camp.bonusProchaineAttaque = 0
+  // Les Boucliers sont percés par l'attaque elle-même, ou par un effet posé avant (Amalgame, Master Sword TOTK)
+  const perceBoucliers = !!effets.ignoreBouclier || camp.ignoreBouclierProchaine
+  camp.ignoreBouclierProchaine = false
 
   if (effets.bonusParProdige) {
     const prodigesAuBanc = camp.banc.filter((combattant) => numerosProdiges.includes(combattant.numero)).length
     degats = degats + effets.bonusParProdige * prodigesAuBanc
+  }
+  if (effets.bonusParSage) {
+    const sagesAuBanc = camp.banc.filter((combattant) => numerosSages.includes(combattant.numero)).length
+    degats = degats + effets.bonusParSage * sagesAuBanc
+  }
+  if (effets.bonusContre && cible.numero === effets.bonusContre.numero) {
+    degats = degats + effets.bonusContre.bonus
   }
   if (effets.critique && adversaire.energie >= effets.critique.energieMin) {
     degats = degats + effets.critique.bonus
@@ -253,18 +274,15 @@ function frapper(etat, idCamp, degatsDeBase, effets, nomAttaque) {
     degats = degats * 2
   }
 
-  const degatsSurActif = blesser(cible, degats, effets.ignoreBouclier)
+  const degatsSurActif = blesser(cible, degats, perceBoucliers)
   let degatsDeZone = 0
   if (effets.zone) {
     for (const combattant of adversaire.banc) {
-      degatsDeZone = degatsDeZone + blesser(combattant, effets.zone, effets.ignoreBouclier)
+      degatsDeZone = degatsDeZone + blesser(combattant, effets.zone, perceBoucliers)
     }
   }
 
-  // Celui qui prend des dégâts gagne +1 Énergie (aide à revenir dans le combat)
-  if (degatsSurActif + degatsDeZone > 0) {
-    ajouterEnergie(adversaire, 1)
-  }
+  // (Prendre des dégâts ne donne PAS d'Énergie : décision d'Elyes, 2026-11-20)
 
   // Effets sur l'attaquant et sur l'adversaire
   if (effets.bouclier) {
@@ -333,7 +351,8 @@ function soignerLePlusBlesse(combattants, soin) {
 function attaquer(etat, idCamp, indexAttaque) {
   const camp = etat.camps[idCamp]
   const attaque = fichesCombattants[camp.actif.numero].attaques[indexAttaque]
-  ajouterEnergie(camp, -attaque.cout)
+  ajouterEnergie(camp, -Math.max(0, attaque.cout - camp.reductionCoutCeTour))
+  camp.reductionCoutCeTour = 0
   frapper(etat, idCamp, attaque.degats, attaque.effets ?? {}, attaque.nom)
 }
 
@@ -364,6 +383,7 @@ function changerDeCombattant(etat, idCamp, indexBanc) {
   const camp = etat.camps[idCamp]
   const cout = actionsPossibles(etat, idCamp).coutRetraite
   ajouterEnergie(camp, -cout)
+  camp.reductionCoutCeTour = 0
   const ancienActif = camp.actif
   camp.actif = camp.banc[indexBanc]
   camp.banc[indexBanc] = ancienActif
@@ -384,6 +404,16 @@ function jouerSupporter(etat, idCamp) {
     const adversaireARare = combattantsEnVie(adversaire).some((combattant) => combattant.rarete >= 3)
     ajouterEnergie(camp, adversaireARare ? 5 : 3)
   } else if (effet === 'terry') {
+    ajouterEnergie(camp, 2)
+  } else if (effet === 'noia') {
+    ajouterEnergie(camp, 3)
+  } else if (effet === 'pruhaTotk') {
+    ajouterEnergie(camp, 2)
+    camp.reductionCoutCeTour = 1
+  } else if (effet === 'rauru') {
+    camp.actif.bouclierPermanent = 20
+  } else if (effet === 'dragonBlanc') {
+    camp.actif.pv = Math.min(camp.actif.pvMax, camp.actif.pv + 40)
     ajouterEnergie(camp, 2)
   } else if (effet === 'pruha') {
     camp.objet.utilise = false
@@ -429,6 +459,17 @@ function jouerObjet(etat, idCamp) {
   } else if (effet === 'paravoile') {
     camp.actif.retraiteGratuite = true
     camp.actif.bouclierPermanent = 20
+  } else if (effet === 'bananes') {
+    // +40, ou +70 si Kohga ou le Sbire Yiga est actif
+    const clanYiga = camp.actif.numero === 112 || camp.actif.numero === 107
+    camp.bonusProchaineAttaque = clanYiga ? 70 : 40
+  } else if (effet === 'bouclierHylia') {
+    camp.actif.annuleProchaineAttaque = true
+  } else if (effet === 'fee') {
+    soignerLePlusBlesse(combattantsEnVie(camp), 70)
+  } else if (effet === 'masterSwordTotk') {
+    camp.bonusProchaineAttaque = 60
+    camp.ignoreBouclierProchaine = true
   } else if (effet === 'tablette') {
     ajouterEnergie(camp, 1)
     adversaire.talentAdverseDesactive = true
@@ -448,9 +489,33 @@ function utiliserTalent(etat, idCamp) {
     camp.actif.annuleProchaineAttaque = true
   } else if (talent.id === 'rageRevali') {
     camp.retraiteGratuiteCeTour = true
+  } else if (talent.id === 'cachette' || talent.id === 'bulleProtectrice') {
+    // Korogu (20) et Sidon (30) : soignent le plus blessé du banc
+    soignerLePlusBlesse(camp.banc, talent.id === 'cachette' ? 20 : 30)
+  } else if (talent.id === 'mareeProtectrice' || talent.id === 'eveilEsprit') {
+    // Prince Sidon (40) et Mineru (50) : soignent le plus blessé de l'équipe
+    soignerLePlusBlesse(combattantsEnVie(camp), talent.id === 'mareeProtectrice' ? 40 : 50)
+  } else if (talent.id === 'priereMiphaEx') {
+    // Mipha ex : rend la moitié de ses PV max au plus blessé de l'équipe
+    soignerLePlusBlesse(combattantsEnVie(camp), Math.floor(camp.actif.pvMax / 2))
+  } else if (talent.id === 'rafaleCeleste' || talent.id === 'bouleDeFeuSage') {
+    // Babil et Yunobo Sages : -1 ⚡ sur la prochaine attaque ou retraite de ce tour
+    camp.reductionCoutCeTour = 1
+  } else if (talent.id === 'amalgame') {
+    // Link ex : +40 et perce les Boucliers sur la prochaine attaque
+    camp.bonusProchaineAttaque = camp.bonusProchaineAttaque + 40
+    camp.ignoreBouclierProchaine = true
+  } else if (talent.id === 'mareeMiasmes' || talent.id === 'colereUrbosa') {
+    // Ganondorf VMAX et Urbosa ex : 20 dégâts à chaque carte du banc adverse
+    const adversaire = etat.camps[adversaireDe(idCamp)]
+    for (const combattant of adversaire.banc) {
+      blesser(combattant, 20, false)
+    }
   }
   etat.message = camp.actif.nom + ' active ' + talent.nom
   noterEvenement(etat, { type: 'talent', camp: idCamp })
+  // Un Talent de zone peut mettre KO des cartes du banc adverse
+  verifierKo(etat, adversaireDe(idCamp))
 }
 
 // Le joueur choisit son nouveau combattant actif après un KO

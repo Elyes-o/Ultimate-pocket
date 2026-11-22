@@ -2,8 +2,8 @@
 // Les decks et les PV sont fixés pour que chaque étape tombe juste :
 //   Tour 1 (3 ⚡)  : Urbosa attaque (1 ⚡) → KO du Bokoblin
 //   Tour 3 (4 ⚡)  : retraite d'Urbosa (3 ⚡) → Riju entre en jeu
-//   Tour 5 (3 ⚡)  : se concentrer → 5 ⚡
-//   Tour 7 (7 ⚡)  : Terry (+2) et Tablette Sheikah (+1) → Ultime « Foudre du Désert » (8 ⚡)
+//   Tour 5 (3 ⚡)  : se concentrer (+1) → 4 ⚡
+//   Tour 7 (6 ⚡)  : Terry (+2) et Tablette Sheikah (+1) → 9 ⚡ → Ultime « Foudre du Désert » (8 ⚡)
 //   Ensuite : le joueur finit seul (dernier KO).
 
 export const deckJoueurTutoriel = { combattants: [9, 13, 12, 10, 1], supporter: 15, objet: 21 }
@@ -47,7 +47,7 @@ export const etapesTutoriel = [
   { texte: 'Choisis Riju pour la faire entrer en jeu.', attend: 'changement' },
   { texte: 'Riju est en jeu. Au tour de ton adversaire…', attend: 'tourJoueur' },
   {
-    texte: "Tu n'as que 3 ⚡. « Se concentrer » donne +2 ⚡ mais termine ton tour. Essaie !",
+    texte: "Tu n'as que 3 ⚡. « Se concentrer » donne +1 ⚡ mais termine ton tour. Essaie !",
     attend: 'concentration',
     cible: 'concentration',
   },

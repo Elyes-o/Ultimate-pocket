@@ -5,7 +5,7 @@ import { View, Text, Image, Pressable, ScrollView } from 'react-native'
 import { router } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
-import { cartesZelda, trouverCarte } from '../src/donnees/cartes'
+import { toutesLesCartes, trouverCarte } from '../src/donnees/cartes'
 import { categorieCarte, combos } from '../src/donnees/combat'
 import { useJoueur } from '../src/donnees/JoueurContexte'
 import { couleurs } from '../src/theme'
@@ -39,7 +39,7 @@ export default function EcranDeck() {
   const [supporter, setSupporter] = useState(deckActuel ? deckActuel.supporter : null)
   const [objet, setObjet] = useState(deckActuel ? deckActuel.objet : null)
 
-  const possedees = cartesZelda.filter((carte) => cartesPossedees.includes(carte.numero))
+  const possedees = toutesLesCartes.filter((carte) => cartesPossedees.includes(carte.numero))
   const combattantsPossedes = possedees.filter((carte) => categorieCarte(carte.numero) === 'combattant')
   const supportersPossedes = possedees.filter((carte) => categorieCarte(carte.numero) === 'supporter')
   const objetsPossedes = possedees.filter((carte) => categorieCarte(carte.numero) === 'objet')

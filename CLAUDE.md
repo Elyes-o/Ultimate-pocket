@@ -68,8 +68,8 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
 
 ## Combat (décidé au grill du 2026-11-19) — détail dans `MODES_DE_JEU.md`
 - Deck : 5 combattants (1 actif + 4 banc) + 1 Supporter + 1 Objet.
-- **Jauge d'Énergie par joueur** (0-10) : départ 3, +2 par tour, gardée, +1 quand on prend des dégâts.
-- 1 action par tour : attaquer (coût = symboles) / se concentrer (+2) / changer (coût de retraite).
+- **Jauge d'Énergie par joueur** (0-10) : départ 3, +2 par tour, gardée. Prendre des dégâts ne donne rien (changé le 2026-11-20).
+- 1 action par tour : attaquer (coût = symboles) / se concentrer (+1, changé le 2026-11-20) / changer (coût de retraite).
 - Supporter et Objet : gratuits, en plus de l'action, 1 fois chacun par combat.
 - **Ultimes = combos de cartes** (Link+Zelda, Prodiges…), 7-10 Énergie, perdus si une carte du combo est KO.
 - Seules les attaques de zone touchent le banc. Premier à 3 KO gagne.
@@ -88,7 +88,8 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
 - Decks des bots : Difficile = Goron + Piafs + Lynel ; Légendaire = Zora + Gerudo ; Ultime = Prodiges + Héros
   + Lame, démarre à 5 Énergie (`energieDepartBots`). Les 8 combos de CARTES_COMBAT.md sont jouables.
 - Difficulté mesurée (simulation de 2 000 parties par niveau contre un joueur « Normal » au deck aléatoire) :
-  le bot gagne 18 % / 74 % / 82 % / 85 % / 92 % (Facile → Ultime).
+  le bot gagne 18 % / 74 % / 82 % / 85 % / 92 % (Facile → Ultime). Mesuré AVANT le passage de la concentration
+  à +1 et la suppression du +1 sur dégâts (2026-11-20) : à re-mesurer.
 - Écrans : `app/(onglets)/combat.jsx` (deck + bots), `app/deck.jsx`, `app/partie.jsx` (le combat).
 - Composants : `CarteCombat` (entrée, élan, onde de choc colorée par type, voile rouge, PV qui descendent
   doucement), `EffetsCombat` (`DegatsFlottants` + badge Faiblesse, `CarteKo` qui tombe avec tampon « KO ! »,
@@ -134,6 +135,7 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
 
 ## Données et assets
 - 23 cartes illustrées de la collection BOTW (Breath of the Wild), dans `cards.zip` (fourni par Elyes), à utiliser dans le jeu.
+- 34 cartes Tears of the Kingdom (2026-11-22), voir la section dédiée plus bas.
 - Le dossier `images/` (ces 23 cartes) est dans `.gitignore` : JAMAIS publié sur GitHub (dépôt public
   `Elyes-o/Ultimate-pocket`). Il a aussi été retiré de tout l'historique git le 2026-11-20. Ne pas le ré-ajouter.
 - Exemples de cartes déjà évoquées : Link (Zelda), Luffy ex (One Piece), Prince Sidon (Zelda).
@@ -219,6 +221,29 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
   faiblesse, retraite, talent, attaques, effet des Supporters / Objets, combos où la carte joue (partenaires
   en silhouette s'ils ne sont pas possédés), exemplaires et combats joués.
 - `couleursTypes` et `texteEffets` sont maintenant dans `src/donnees/combat.js` (partagés combat + collection).
+
+## Collection Tears of the Kingdom + rareté SECRÈTE (2026-11-22)
+- 34 cartes fournies par Elyes (PNG 1000×1400 dans `images/Totk/`), converties en webp 400×560 dans
+  `images/totk-cartes/` (dossier `images/` ignoré par git : jamais publié). Numéros **101 à 134**.
+- Raretés : 9 × 1★, 9 × 2★, 9 × 3★ (dont les 5 Sages 115-119), 3 × 4★ (Link ex, Zelda ex, Ganondorf VMAX),
+  **4 secrètes = rareté 5** (Daruk, Mipha, Revali, Urbosa ex en vitrail), logo arc-en-ciel (`Rarete` +
+  `ARC_EN_CIEL`). Recyclage d'une secrète : 150 Éclats.
+- `src/donnees/cartes.js` : `collections` (botw, totk ; titre à 100 % : « Maître d'Hyrule », « Gardien des Sages »),
+  `toutesLesCartes`, `trouverCarte` (toutes collections), `collectionDe`, `RARETE_SECRETE`.
+- `src/donnees/combatTotk.js` : fiches de combat (fusionnées dans combat.js), Supporters (Noïa, Pru'ha, Rauru,
+  Dragon Blanc), Objets (Bananes Lame, Bouclier d'Hylia, Fée en Bouteille, Master Sword), `numerosSages`,
+  5 combos (Éveil des Sages = Link ex + un Sage, Héritiers d'Hyrule, Clan Yiga, Armée du Roi Démon, Prodiges de
+  Vitrail). Textes trop libres des cartes traduits en effets connus du moteur (ex. Daruk ex = moitié des dégâts).
+- Moteur : type Dragon, Talent passif (`passif: true`), `reductionCoutCeTour` (-1 ⚡ attaque ou retraite),
+  `ignoreBouclierProchaine`, effets `bonusParSage` et `bonusContre`, Talents de soin et de zone.
+- Booster **Royaume céleste** (`zelda-totk`, 120 Éclats ou 4 pubs, visuel `booster-royaume-celeste.webp`), tirage
+  `totk` : secrète possible en 4e (2 %) et 5e carte (5 %). `tirerBooster(tirage, collection)`.
+- Collection : sélecteur BOTW / TOTK, progression, paliers (ids `totk-p25`…) et filtre « Secrète » par collection.
+- **Numéro affiché (règle d'Elyes)** : plus il est haut, plus la carte est dure à obtenir. Chaque collection est
+  triée par rareté, puis à rareté égale de la plus faible à la plus forte (PV + plus grosse attaque ; combattants
+  avant Supporters et Objets) → `carte.numeroCollection` (« N° 007 »). L'identifiant `carte.numero` (sauvegardes,
+  decks, combos) ne change pas. Code : `rangerCollection` dans `src/donnees/cartes.js`.
+- Image de la carte Lynel d'Argent incomplète (illustration presque vide) : à refaire par Elyes.
 
 ## Sons et vibrations (2026-11-19)
 - `assets/sons/*.wav` : 12 bruitages ORIGINAUX créés par synthèse (Python/numpy), aucun droit d'auteur :

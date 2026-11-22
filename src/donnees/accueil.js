@@ -6,8 +6,18 @@ import { trouverCarte } from './cartes'
 // "fond" = illustration générée avec Figma ; "degrade" = couleur affichée pendant le chargement de l'image.
 export const diapositivesVitrine = [
   {
-    id: 'nouvelle-collection',
+    id: 'collection-totk',
     badge: 'Nouvelle collection',
+    titre: 'Tears of the Kingdom',
+    sousTitre: '34 cartes, dont 4 secrètes',
+    degrade: ['#2A2470', '#3FC6E0'],
+    fond: require('../../assets/visuels/vitrine-totk.webp'),
+    // Ordre : arrière gauche, arrière droite, puis la carte mise en avant (devant)
+    cartes: [trouverCarte(121), trouverCarte(122), trouverCarte(120)],
+  },
+  {
+    id: 'nouvelle-collection',
+    badge: 'Collection',
     titre: 'Breath of the Wild',
     sousTitre: '23 cartes à collectionner',
     degrade: ['#1E7A4C', '#4CC38A'],
@@ -47,7 +57,20 @@ export const boosters = [
     disponible: true,
     prixEclats: 100,
     nombrePubs: 3, // provisoire : 3 pubs = 1 booster gratuit
+    collection: 'botw',
     tirage: 'normal',
+  },
+  {
+    id: 'zelda-totk',
+    nom: 'Royaume céleste',
+    univers: 'Zelda, Tears of the Kingdom',
+    couleur: '#3FC6E0',
+    visuel: require('../../assets/visuels/booster-royaume-celeste.webp'),
+    disponible: true,
+    prixEclats: 120, // provisoire : un peu plus cher, il peut contenir une carte secrète
+    nombrePubs: 4,
+    collection: 'totk',
+    tirage: 'totk',
   },
   {
     id: 'zelda-legendaire',
@@ -59,6 +82,7 @@ export const boosters = [
     legendaire: true, // affiche le ruban doré
     prixEclats: 300, // provisoire
     nombrePubs: null, // null = achetable UNIQUEMENT en Éclats (pas avec des pubs)
+    collection: 'botw',
     tirage: 'legendaire',
   },
   {
@@ -86,4 +110,5 @@ export const astuces = [
   'Link et Zelda ensemble peuvent lancer une attaque duo.',
   'La jauge d\'ultime se remplit pendant le combat.',
   'Regarde une pub pour gagner des Tickets.',
+  'Les cartes secrètes, au logo arc-en-ciel, ne sortent que dans le booster Royaume céleste.',
 ]

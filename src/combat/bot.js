@@ -8,7 +8,7 @@
 //     3. ÉCONOMISE son Énergie quand un Ultime est proche
 //     4. casse TES combos (attaque de zone sur ton banc) quand ton Ultime approche
 //     5. joue son Supporter, son Objet et son Talent au bon moment
-import { actionsPossibles, ultimesDisponibles, ENERGIE_MAX } from './moteur'
+import { actionsPossibles, ultimesDisponibles, ENERGIE_MAX, ENERGIE_CONCENTRATION } from './moteur'
 import { fichesSupporters, fichesObjets, numerosProdiges } from '../donnees/combat'
 
 const ENERGIE_PAR_TOUR = 2
@@ -240,8 +240,8 @@ function choisirIntelligent(etat) {
     if (attaquesDansLeBudget.length > 0) {
       return avecAttaque(meilleureAttaque(etat, attaquesDansLeBudget).index)
     }
-    // Se concentrer rapproche de l'Ultime (+2 maintenant, +2 au prochain tour)
-    if (campBot.energie + 2 * ENERGIE_PAR_TOUR >= cout && campBot.energie < ENERGIE_MAX) {
+    // Se concentrer rapproche de l'Ultime (+1 maintenant, +2 au début du prochain tour)
+    if (campBot.energie + ENERGIE_CONCENTRATION + ENERGIE_PAR_TOUR >= cout && campBot.energie < ENERGIE_MAX) {
       actions.push({ type: 'concentration' })
       return actions
     }

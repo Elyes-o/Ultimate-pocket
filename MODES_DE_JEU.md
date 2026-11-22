@@ -15,14 +15,14 @@
 ### L'Énergie (la ressource à gérer)
 - **Une jauge par joueur**, partagée par toute l'équipe, de 0 à **10**.
 - Départ à **3/10**. **+2 au début de chaque tour.** L'énergie non dépensée est **gardée**.
-- **+1 Énergie chaque fois qu'on prend des dégâts** (permet de revenir quand on est mené).
+- Prendre des dégâts ne donne **pas** d'Énergie (règle changée le 2026-11-20).
 - Une attaque coûte **autant d'Énergie que de symboles** sur la carte.
 
 ### Un tour
 1. (Optionnel, gratuit) Jouer son **Supporter** et/ou son **Objet** — **une seule fois chacun par combat**.
 2. **Une action** au choix :
    - **Attaquer** avec le combattant actif (payer le coût) ;
-   - **Se concentrer** : pas d'attaque, **+2 Énergie** en plus ;
+   - **Se concentrer** : pas d'attaque, **+1 Énergie** en plus ;
    - **Changer de combattant** : payer le **coût de retraite** en Énergie.
 - Qui commence : tiré au hasard.
 

@@ -83,6 +83,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#C77DFF',
     shadowColor: '#C77DFF',
   },
+  haloArcEnCiel: {
+    ...StyleSheet.absoluteFill,
+    borderRadius: 28,
+  },
   cadreCarte: {
     zIndex: 1, // devant le halo
     width: LARGEUR_CARTE,

@@ -438,7 +438,7 @@ export default function EcranPartie() {
                 >
                   <Ionicons name="hourglass-outline" size={16} color={couleurs.principaleFoncee} />
                   <Text style={styles.textePetiteAction}>Se concentrer</Text>
-                  <Text style={styles.detailPetiteAction}>+2 ⚡, finit le tour</Text>
+                  <Text style={styles.detailPetiteAction}>+1 ⚡, finit le tour</Text>
                 </Pressable>
                 <Pressable
                   style={[

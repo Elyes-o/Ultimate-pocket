@@ -1,4 +1,4 @@
-// Onglet Collection : choix de l'univers (seul Zelda est ouvert en v1), progression avec paliers
+// Onglet Collection : choix de l'univers (seul Zelda est ouvert) puis de la collection (BOTW, TOTK), progression avec paliers
 // de récompenses, recyclage des doublons, filtres, et grille des cartes.
 // Appuyer sur une carte possédée ouvre sa fiche complète (FicheCarte).
 import { useState } from 'react'
@@ -7,7 +7,8 @@ import { Ionicons } from '@expo/vector-icons'
 import CarteCollection from '../../src/composants/CarteCollection'
 import FicheCarte from '../../src/composants/FicheCarte'
 import IconeEclat from '../../src/composants/IconeEclat'
-import { cartesZelda } from '../../src/donnees/cartes'
+import Rarete from '../../src/composants/Rarete'
+import { collections } from '../../src/donnees/cartes'
 import { categorieCarte } from '../../src/donnees/combat'
 import { paliersCollection, cartesRequises } from '../../src/donnees/collection'
 import { useJoueur } from '../../src/donnees/JoueurContexte'
@@ -64,21 +65,26 @@ function Palier({ palier, etat, requises, quandOnAppuie }) {
 export default function EcranCollection() {
   const [carteOuverte, setCarteOuverte] = useState(null)
   const [possession, setPossession] = useState('toutes')
+  const [idCollection, setIdCollection] = useState('totk') // la nouvelle collection est ouverte en premier
   const [raretes, setRaretes] = useState([])
   const [categories, setCategories] = useState([])
   const [palierRecu, setPalierRecu] = useState(null)
   const [confirmerRecyclage, setConfirmerRecyclage] = useState(false)
   const {
     possedeCarte, nombreExemplaires, cartesPossedees, etatPalier, reclamerPalier, valeurDoublons, recyclerDoublons,
+    nombrePossedeesDans,
   } = useJoueur()
   const { jouerSon, vibrer } = useEffetsSonores()
 
-  const nombrePossedees = cartesPossedees.length
-  const total = cartesZelda.length
+  const collection = collections.find((element) => element.id === idCollection)
+  const nombrePossedees = nombrePossedeesDans(collection)
+  const total = collection.cartes.length
+  // Raretés présentes dans cette collection (5 = secrète, seulement dans TOTK)
+  const raretesDeLaCollection = [1, 2, 3, 4, 5].filter((rarete) => collection.cartes.some((carte) => carte.rarete === rarete))
   const nombreDoublons = cartesPossedees.reduce((somme, numero) => somme + nombreExemplaires(numero) - 1, 0)
   const gainRecyclage = valeurDoublons()
 
-  const cartesAffichees = cartesZelda.filter((carte) => {
+  const cartesAffichees = collection.cartes.filter((carte) => {
     const possedee = possedeCarte(carte.numero)
     if (possession === 'possedees' && !possedee) return false
     if (possession === 'manquantes' && possedee) return false
@@ -94,8 +100,13 @@ export default function EcranCollection() {
     setCategories([])
   }
 
+  function changerDeCollection(id) {
+    setIdCollection(id)
+    reinitialiserFiltres()
+  }
+
   function reclamer(idPalier) {
-    const palier = reclamerPalier(idPalier)
+    const palier = reclamerPalier(idPalier, collection)
     if (palier) {
       jouerSon('recompense')
       vibrer('succes')
@@ -128,9 +139,24 @@ export default function EcranCollection() {
         ))}
       </View>
 
+      {/* Les collections de l'univers */}
+      <View style={styles.segments}>
+        {collections.map((element) => (
+          <Pressable
+            key={element.id}
+            style={[styles.segment, idCollection === element.id && styles.segmentActif]}
+            onPress={() => changerDeCollection(element.id)}
+          >
+            <Text style={[styles.texteSegment, idCollection === element.id && styles.texteSegmentActif]} numberOfLines={1}>
+              {element.nom}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
+
       <View style={styles.progression}>
         <View style={styles.ligneProgression}>
-          <Text style={styles.nomCollection}>Breath of the Wild</Text>
+          <Text style={styles.nomCollection}>{collection.nom}</Text>
           <Text style={styles.compteur}>
             <Text style={styles.compteurFort}>{nombrePossedees}</Text> / {total}
           </Text>
@@ -147,7 +173,7 @@ export default function EcranCollection() {
             <Palier
               key={palier.id}
               palier={palier}
-              etat={etatPalier(palier)}
+              etat={etatPalier(palier, collection)}
               requises={cartesRequises(palier, total)}
               quandOnAppuie={() => reclamer(palier.id)}
             />
@@ -183,17 +209,23 @@ export default function EcranCollection() {
         ))}
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.listeFiltres}>
-        {[1, 2, 3, 4].map((rarete) => {
+        {raretesDeLaCollection.map((rarete) => {
           const actif = raretes.includes(rarete)
           return (
             <Pressable
               key={rarete}
               style={[styles.filtre, actif && styles.filtreActif]}
               onPress={() => setRaretes(basculer(raretes, rarete))}
-              accessibilityLabel={'Rareté ' + rarete + ' étoiles'}
+              accessibilityLabel={rarete === 5 ? 'Cartes secrètes' : 'Rareté ' + rarete + ' étoiles'}
             >
-              <Text style={[styles.texteFiltre, actif && styles.texteFiltreActif]}>{rarete}</Text>
-              <Ionicons name="star" size={12} color={actif ? couleurs.texteInverse : couleurs.etoile} />
+              {rarete === 5 ? (
+                <Rarete rarete={5} taille={12} avecTexte />
+              ) : (
+                <>
+                  <Text style={[styles.texteFiltre, actif && styles.texteFiltreActif]}>{rarete}</Text>
+                  <Ionicons name="star" size={12} color={actif ? couleurs.texteInverse : couleurs.etoile} />
+                </>
+              )}
             </Pressable>
           )
         })}

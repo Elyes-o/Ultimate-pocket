@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import AvatarJoueur from '../src/composants/AvatarJoueur'
 import { useJoueur, LONGUEUR_MAX_PSEUDO } from '../src/donnees/JoueurContexte'
-import { cartesZelda, trouverCarte } from '../src/donnees/cartes'
+import { toutesLesCartes, trouverCarte } from '../src/donnees/cartes'
 import { fichesCombattants, niveauxBot } from '../src/donnees/combat'
 import { couleurs } from '../src/theme'
 import styles from '../src/ecrans/Profil.styles'
@@ -47,7 +47,7 @@ export default function EcranProfil() {
   const [choixAvatar, setChoixAvatar] = useState(false)
   const [confirmationRecommencer, setConfirmationRecommencer] = useState(false)
 
-  const cartesDuJoueur = cartesZelda.filter((carte) => cartesPossedees.includes(carte.numero))
+  const cartesDuJoueur = toutesLesCartes.filter((carte) => cartesPossedees.includes(carte.numero))
   const totalCombats = statistiques.victoires + statistiques.defaites
   const pourcentage = totalCombats > 0 ? Math.round((statistiques.victoires / totalCombats) * 100) : 0
 
@@ -131,7 +131,7 @@ export default function EcranProfil() {
               </View>
             )}
             <Text style={styles.sousTitre}>
-              {cartesDuJoueur.length} / {cartesZelda.length} cartes collectionnées
+              {cartesDuJoueur.length} / {toutesLesCartes.length} cartes collectionnées
             </Text>
           </View>
 
@@ -172,7 +172,7 @@ export default function EcranProfil() {
             <CarteMiseEnAvant
               titre="Meilleure carte"
               numero={meilleureCarte ? meilleureCarte.numero : null}
-              detail={meilleureCarte ? '★'.repeat(meilleureCarte.rarete) : ''}
+              detail={meilleureCarte ? (meilleureCarte.rarete === 5 ? 'Secrète' : '★'.repeat(meilleureCarte.rarete)) : ''}
               vide="Aucune carte"
             />
             <CarteMiseEnAvant

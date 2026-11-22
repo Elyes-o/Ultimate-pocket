@@ -3,7 +3,7 @@
 // Pas encore de compte en ligne : chaque appareil a sa propre partie.
 import { createContext, useContext, useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { cartesZelda } from './cartes'
+import { cartesZelda, toutesLesCartes, trouverCarte, collections } from './cartes'
 import { categorieCarte, niveauxBot, RECOMPENSE_DEFAITE } from './combat'
 import { VALEUR_RECYCLAGE, paliersCollection, cartesRequises } from './collection'
 
@@ -179,8 +179,8 @@ export function JoueurFournisseur({ children }) {
 
   // ---------- Collection ----------
 
-  // Numéros des cartes possédées (au moins 1 exemplaire), dans l'ordre de la collection
-  const cartesPossedees = cartesZelda
+  // Numéros des cartes possédées (au moins 1 exemplaire), toutes collections, dans l'ordre
+  const cartesPossedees = toutesLesCartes
     .filter((carte) => (exemplaires[carte.numero] ?? 0) > 0)
     .map((carte) => carte.numero)
 
@@ -209,7 +209,7 @@ export function JoueurFournisseur({ children }) {
     let total = 0
     for (const element of numeros) {
       const doublons = Math.max(0, (exemplaires[element] ?? 0) - 1)
-      total = total + doublons * VALEUR_RECYCLAGE[cartesZelda.find((carte) => carte.numero === element).rarete]
+      total = total + doublons * VALEUR_RECYCLAGE[trouverCarte(element).rarete]
     }
     return total
   }
@@ -226,7 +226,7 @@ export function JoueurFournisseur({ children }) {
       const aRecycler = numero === undefined ? doublons : Math.min(1, doublons)
       if (aRecycler > 0) {
         nouveaux[element] = nouveaux[element] - aRecycler
-        gain = gain + aRecycler * VALEUR_RECYCLAGE[cartesZelda.find((carte) => carte.numero === element).rarete]
+        gain = gain + aRecycler * VALEUR_RECYCLAGE[trouverCarte(element).rarete]
       }
     }
     if (gain > 0) {
@@ -236,28 +236,40 @@ export function JoueurFournisseur({ children }) {
     return gain
   }
 
-  // État d'un palier : 'reclame', 'pret' (à réclamer) ou 'verrouille'
-  function etatPalier(palier) {
-    if (paliersReclames.includes(palier.id)) {
-      return 'reclame'
-    }
-    return cartesPossedees.length >= cartesRequises(palier, cartesZelda.length) ? 'pret' : 'verrouille'
+  // Identifiant sauvegardé d'un palier : 'p25' pour BOTW (anciennes sauvegardes), 'totk-p25' pour TOTK…
+  function idPalier(palier, collection) {
+    return collection.id === 'botw' ? palier.id : collection.id + '-' + palier.id
   }
 
-  // Donne la récompense d'un palier atteint. Renvoie le palier, ou null s'il n'est pas prêt.
-  function reclamerPalier(idPalier) {
-    const palier = paliersCollection.find((element) => element.id === idPalier)
-    if (!palier || etatPalier(palier) !== 'pret') {
+  // Nombre de cartes différentes possédées dans une collection
+  function nombrePossedeesDans(collection) {
+    return collection.cartes.filter((carte) => possedeCarte(carte.numero)).length
+  }
+
+  // État d'un palier d'une collection : 'reclame', 'pret' (à réclamer) ou 'verrouille'
+  function etatPalier(palier, collection) {
+    if (paliersReclames.includes(idPalier(palier, collection))) {
+      return 'reclame'
+    }
+    return nombrePossedeesDans(collection) >= cartesRequises(palier, collection.cartes.length) ? 'pret' : 'verrouille'
+  }
+
+  // Donne la récompense d'un palier atteint. Renvoie le palier (avec le titre éventuel), ou null s'il n'est pas prêt.
+  function reclamerPalier(idDuPalier, collection) {
+    const palier = paliersCollection.find((element) => element.id === idDuPalier)
+    if (!palier || etatPalier(palier, collection) !== 'pret') {
       return null
     }
     setEclats(eclats + palier.eclats)
     setTickets(tickets + palier.tickets)
-    setPaliersReclames([...paliersReclames, palier.id])
-    return palier
+    setPaliersReclames([...paliersReclames, idPalier(palier, collection)])
+    return { ...palier, titre: palier.titre ? collection.titre : null }
   }
 
-  // Titre affiché sous le pseudo (débloqué par le palier 100 %), ou null
-  const titre = paliersCollection.find((palier) => palier.titre && paliersReclames.includes(palier.id))?.titre ?? null
+  // Titre affiché sous le pseudo : celui de la dernière collection complétée à 100 % (ou null)
+  const palierComplet = paliersCollection.find((palier) => palier.titre)
+  const collectionsCompletes = collections.filter((collection) => paliersReclames.includes(idPalier(palierComplet, collection)))
+  const titre = collectionsCompletes.length > 0 ? collectionsCompletes[collectionsCompletes.length - 1].titre : null
 
   // ---------- Combat ----------
 
@@ -267,7 +279,7 @@ export function JoueurFournisseur({ children }) {
     if (deck) {
       return deck
     }
-    const possedees = cartesZelda.filter((carte) => cartesPossedees.includes(carte.numero))
+    const possedees = toutesLesCartes.filter((carte) => cartesPossedees.includes(carte.numero))
     const parRarete = possedees.slice().sort((a, b) => b.rarete - a.rarete)
     const combattants = parRarete.filter((carte) => categorieCarte(carte.numero) === 'combattant').slice(0, 5)
     const supporter = parRarete.find((carte) => categorieCarte(carte.numero) === 'supporter')
@@ -362,6 +374,7 @@ export function JoueurFournisseur({ children }) {
     recyclerDoublons,
     etatPalier,
     reclamerPalier,
+    nombrePossedeesDans,
     titre,
     tutoriel,
     marquerTutorielPropose,

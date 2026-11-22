@@ -8,6 +8,8 @@ import { router, useLocalSearchParams } from 'expo-router'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Ionicons } from '@expo/vector-icons'
 import PaquetBooster from '../src/composants/PaquetBooster'
+import Rarete from '../src/composants/Rarete'
+import { ARC_EN_CIEL } from '../src/composants/Rarete.styles'
 import DosCarte from '../src/composants/DosCarte'
 import { useJoueur } from '../src/donnees/JoueurContexte'
 import { useEffetsSonores } from '../src/sons'
@@ -21,6 +23,9 @@ const ANIMATION_NATIVE = Platform.OS !== 'web'
 
 // Texte affiché au-dessus des cartes rares
 function libelleRarete(rarete) {
+  if (rarete === 5) {
+    return 'SECRÈTE'
+  }
   if (rarete === 4) {
     return 'ULTRA RARE'
   }
@@ -41,7 +46,7 @@ export default function EcranOuverture() {
   // On note aussi si chaque carte est nouvelle (pas encore possédée, et pas déjà sortie dans ce booster).
   const [cartesTirees] = useState(() => {
     const dejaVues = []
-    return tirerBooster(booster.tirage).map((carte) => {
+    return tirerBooster(booster.tirage, booster.collection).map((carte) => {
       const estNouvelle = !possedeCarte(carte.numero) && !dejaVues.includes(carte.numero)
       dejaVues.push(carte.numero)
       return { ...carte, estNouvelle }
@@ -96,7 +101,7 @@ export default function EcranOuverture() {
     jouerSon('carte')
     if (carte.rarete >= 3) {
       setTimeout(() => jouerSon('rare'), 120)
-      vibrer(carte.rarete === 4 ? 'fort' : 'moyen')
+      vibrer(carte.rarete >= 4 ? 'fort' : 'moyen')
     } else {
       vibrer('leger')
     }
@@ -250,7 +255,7 @@ export default function EcranOuverture() {
   )
 }
 
-// Grande carte révélée, avec halo doré et étiquettes si elle est rare ou nouvelle
+// Grande carte révélée, avec halo (doré, violet, ou arc-en-ciel si secrète) et étiquettes si elle est rare ou nouvelle
 function CarteRevelee({ carte, apparition, halo }) {
   const libelle = libelleRarete(carte.rarete)
 
@@ -274,7 +279,10 @@ function CarteRevelee({ carte, apparition, halo }) {
             carte.rarete === 4 && styles.haloUltra,
             { opacity: halo.interpolate({ inputRange: [0, 1], outputRange: [0.45, 0.9] }) },
           ]}
-        />
+        >
+          {/* Carte secrète : halo arc-en-ciel */}
+          {carte.rarete === 5 && <LinearGradient colors={ARC_EN_CIEL} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.haloArcEnCiel} />}
+        </Animated.View>
       )}
 
       <View style={styles.cadreCarte}>
@@ -284,7 +292,7 @@ function CarteRevelee({ carte, apparition, halo }) {
       <View style={styles.etiquettes}>
         {libelle && (
           <View style={[styles.etiquette, styles.etiquetteRare]}>
-            <Ionicons name="star" size={12} color="#5A3B00" />
+            {carte.rarete === 5 ? <Rarete rarete={5} taille={12} /> : <Ionicons name="star" size={12} color="#5A3B00" />}
             <Text style={styles.texteEtiquetteRare}>{libelle}</Text>
           </View>
         )}

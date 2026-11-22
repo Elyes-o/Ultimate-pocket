@@ -2,10 +2,10 @@
 // Carte possédée : l'image (+ pastille ×2, ×3… s'il y a des doublons). Carte manquante : silhouette grise avec son numéro.
 import { View, Text, Image, Pressable } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import { couleurs } from '../theme'
+import Rarete from './Rarete'
 import styles from './CarteCollection.styles'
 
-// Affiche "007" pour la carte n°7
+// Affiche "007" pour la 7e carte de la collection (numéro de collection, voir cartes.js)
 function formaterNumero(numero) {
   return String(numero).padStart(3, '0')
 }
@@ -16,7 +16,7 @@ export default function CarteCollection({ carte, possedee, exemplaires = 1, quan
       <View style={styles.case}>
         <View style={[styles.carte, styles.silhouette]}>
           <Ionicons name="help" size={28} color="#C3C9D8" />
-          <Text style={styles.numeroSilhouette}>{formaterNumero(carte.numero)}</Text>
+          <Text style={styles.numeroSilhouette}>{formaterNumero(carte.numeroCollection)}</Text>
         </View>
       </View>
     )
@@ -34,9 +34,7 @@ export default function CarteCollection({ carte, possedee, exemplaires = 1, quan
         )}
       </View>
       <View style={styles.etoiles}>
-        {Array.from({ length: carte.rarete }).map((_, index) => (
-          <Ionicons key={index} name="star" size={10} color={couleurs.etoile} />
-        ))}
+        <Rarete rarete={carte.rarete} taille={10} />
       </View>
     </Pressable>
   )

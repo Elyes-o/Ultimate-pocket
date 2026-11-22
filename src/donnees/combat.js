@@ -1,4 +1,6 @@
 // Données de combat des cartes (validées par Elyes, voir CARTES_COMBAT.md).
+// Collection BOTW ici ; Tears of the Kingdom dans combatTotk.js (ajoutée à la fin de ce fichier).
+import { fichesCombattantsTotk, fichesSupportersTotk, fichesObjetsTotk, combosTotk, numerosSages } from './combatTotk'
 // Les numéros sont ceux de cartes.js. Les effets utilisent un petit vocabulaire commun :
 //   zone          : dégâts à chaque carte du banc adverse
 //   bouclier      : dégâts en moins au prochain tour adverse (sur l'attaquant)
@@ -269,7 +271,7 @@ export function categorieCarte(numero) {
 // Couleur de chaque type (onde de choc en combat, pastille de type dans la Collection)
 export const couleursTypes = {
   feu: '#E2483D', eau: '#1FB6E6', electrique: '#F7B731', combat: '#C0702B', psy: '#C77DFF',
-  tenebres: '#3B4A6B', metal: '#8C98A8', incolore: '#5B4CF5', plante: '#2F9E62', fee: '#F27DB5',
+  tenebres: '#3B4A6B', metal: '#8C98A8', incolore: '#5B4CF5', plante: '#2F9E62', fee: '#F27DB5', dragon: '#C9A227',
 }
 
 // Texte court qui résume les effets d'une attaque
@@ -288,11 +290,21 @@ export function texteEffets(effets) {
   if (effets.critique) morceaux.push('Critique +' + effets.critique.bonus)
   if (effets.bonusParProdige) morceaux.push('+' + effets.bonusParProdige + '/Prodige')
   if (effets.fatigue) morceaux.push('Fatigue')
+  if (effets.bonusParSage) morceaux.push('+' + effets.bonusParSage + '/Sage')
+  if (effets.bonusContre) morceaux.push('+' + effets.bonusContre.bonus + ' contre Ganondorf')
   return morceaux.join(', ')
 }
 
 // Noms affichés des types
 export const nomsTypes = {
   incolore: 'Incolore', tenebres: 'Ténèbres', psy: 'Psy', combat: 'Combat', eau: 'Eau',
-  feu: 'Feu', electrique: 'Électrique', metal: 'Métal', plante: 'Plante', fee: 'Fée',
+  feu: 'Feu', electrique: 'Électrique', metal: 'Métal', plante: 'Plante', fee: 'Fée', dragon: 'Dragon',
 }
+
+// ---------- Collection Tears of the Kingdom ----------
+// Ses cartes rejoignent les mêmes listes : le moteur et les écrans n'ont pas à savoir de quelle collection vient une carte.
+Object.assign(fichesCombattants, fichesCombattantsTotk)
+Object.assign(fichesSupporters, fichesSupportersTotk)
+Object.assign(fichesObjets, fichesObjetsTotk)
+combos.push(...combosTotk)
+export { numerosSages }

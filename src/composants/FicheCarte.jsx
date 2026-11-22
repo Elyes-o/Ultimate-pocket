@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import IconeEclat from './IconeEclat'
+import Rarete from './Rarete'
 import { trouverCarte } from '../donnees/cartes'
 import {
   fichesCombattants, fichesSupporters, fichesObjets, combos, nomsTypes, couleursTypes,
@@ -54,7 +55,7 @@ function CoutEnergie({ cout }) {
 // La carte en grand, qui s'incline sous le doigt (ou la souris sur le web)
 function CarteInclinable({ carte }) {
   const position = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current
-  const brillante = carte.rarete >= 3
+  const brillante = carte.rarete >= 3 // 3★, 4★ et secrètes
 
   const gestes = useRef(
     PanResponder.create({
@@ -90,7 +91,7 @@ function CarteInclinable({ carte }) {
       <Animated.View
         style={[
           styles.carte,
-          carte.rarete === 4 && styles.carteUltraRare,
+          carte.rarete >= 4 && styles.carteUltraRare,
           carte.rarete === 3 && styles.carteRare,
           { transform: [{ perspective: 800 }, { rotateX: rotationX }, { rotateY: rotationY }] },
         ]}
@@ -188,7 +189,7 @@ export default function FicheCarte({ numero, quandOnFerme }) {
       <View style={[styles.ecran, { paddingTop: marges.top + 8 }]}>
         <View style={styles.entete}>
           <View style={styles.boutonRond} />
-          <Text style={styles.numero}>N° {String(carte.numero).padStart(3, '0')}</Text>
+          <Text style={styles.numero}>N° {String(carte.numeroCollection).padStart(3, '0')}</Text>
           <Pressable style={styles.boutonRond} onPress={quandOnFerme} accessibilityLabel="Fermer la fiche">
             <Ionicons name="close" size={22} color={couleurs.texteInverse} />
           </Pressable>
@@ -199,11 +200,7 @@ export default function FicheCarte({ numero, quandOnFerme }) {
 
           <Text style={styles.nom}>{carte.nom}</Text>
           <View style={styles.ligneSousTitre}>
-            <View style={styles.etoiles}>
-              {Array.from({ length: carte.rarete }).map((_, index) => (
-                <Ionicons key={index} name="star" size={14} color={couleurs.etoile} />
-              ))}
-            </View>
+            <Rarete rarete={carte.rarete} taille={14} avecTexte />
             <Text style={styles.point}>·</Text>
             <Text style={styles.categorie}>{nomsCategories[categorie]}</Text>
           </View>
