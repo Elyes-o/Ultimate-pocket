@@ -1,4 +1,4 @@
-// Une carte pendant le combat : image, barre de PV qui descend doucement, badges d'état.
+// Une carte pendant le combat : PV en gros au-dessus (barre qui descend doucement), badges d'état, image.
 // Animations :
 //   - entrée : quand une NOUVELLE carte arrive à cette place, elle glisse et grandit
 //   - "elan" (id qui change) : la carte fonce vers l'adversaire puis revient
@@ -141,29 +141,25 @@ export default function CarteCombat({ combattant, largeur, coup, elan, versLeHau
         />
       )}
 
+      {/* PV en gros au-dessus de la carte, avec leur barre (comme dans TCG Pocket) */}
+      <View style={styles.entetePv}>
+        <View style={styles.badges}>
+          {protege && <Ionicons name="shield" size={detaille ? 14 : 11} color="#1FB6E6" />}
+          {combattant.bloque && <Ionicons name="lock-closed" size={detaille ? 14 : 11} color="#E2483D" />}
+          {combattant.fatigueActive && <Ionicons name="moon" size={detaille ? 14 : 11} color="#6A7390" />}
+        </View>
+        <View style={styles.blocPv}>
+          <Text style={[styles.textePv, !detaille && styles.textePvPetit]}>{combattant.pv}</Text>
+          <View style={[styles.barreFond, !detaille && styles.barreFondPetite]}>
+            <Animated.View style={[styles.barrePleine, { width: largeurPv, backgroundColor: couleurPv(ratioPv) }]} />
+          </View>
+        </View>
+      </View>
+
       <View style={[styles.cadre, { width: largeur, height: hauteur, borderRadius: largeur * 0.07 }]}>
         <Image source={trouverCarte(combattant.numero).image} style={styles.image} />
         <Animated.View pointerEvents="none" style={[styles.voileRouge, { opacity: voileRouge }]} />
       </View>
-
-      {/* Barre de PV */}
-      <View style={styles.barreFond}>
-        <Animated.View style={[styles.barrePleine, { width: largeurPv, backgroundColor: couleurPv(ratioPv) }]} />
-      </View>
-      {detaille ? (
-        <View style={styles.ligneInfos}>
-          <Text style={styles.textePv}>
-            {combattant.pv} <Text style={styles.textePvMax}>/ {combattant.pvMax}</Text>
-          </Text>
-          <View style={styles.badges}>
-            {protege && <Ionicons name="shield" size={14} color="#1FB6E6" />}
-            {combattant.bloque && <Ionicons name="lock-closed" size={14} color="#E2483D" />}
-            {combattant.fatigueActive && <Ionicons name="moon" size={14} color="#6A7390" />}
-          </View>
-        </View>
-      ) : (
-        <Text style={styles.textePvPetit}>{combattant.pv}</Text>
-      )}
     </Animated.View>
   )
 }

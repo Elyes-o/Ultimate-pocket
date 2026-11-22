@@ -1,6 +1,7 @@
-// Jauge d'Énergie d'un joueur : 10 cases.
-//   - "apercu" : nombre de cases que l'action choisie va dépenser (elles clignotent)
-//   - quand l'Énergie augmente, les nouvelles cases "pop" et un "+X" s'envole
+// Jauge d'Énergie d'un joueur, style « HUD » de jeu vidéo : capsule sombre, contour cyan néon, 10 segments.
+//   - "apercu" : nombre de segments que l'action choisie va dépenser (ils clignotent)
+//   - quand l'Énergie augmente, les nouveaux segments "pop" et un "+X" s'envole
+//   - "verticale" : jauge debout, qui se remplit de bas en haut (plateau de combat)
 //   - "compacte" : petite version (pour le bot)
 import { useEffect, useRef, useState } from 'react'
 import { View, Text, Animated, Platform } from 'react-native'
@@ -10,7 +11,7 @@ import styles from './JaugeEnergie.styles'
 
 const ANIMATION_NATIVE = Platform.OS !== 'web'
 
-export default function JaugeEnergie({ energie, apercu = 0, compacte = false }) {
+export default function JaugeEnergie({ energie, apercu = 0, compacte = false, verticale = false }) {
   const clignotement = useRef(new Animated.Value(1)).current
   const pop = useRef(new Animated.Value(1)).current
   const envol = useRef(new Animated.Value(1)).current
@@ -58,20 +59,30 @@ export default function JaugeEnergie({ energie, apercu = 0, compacte = false }) 
         key={index}
         style={[
           styles.case,
-          compacte && styles.caseCompacte,
+          verticale ? styles.caseVerticale : styles.caseHorizontale,
+          compacte && (verticale ? styles.caseVerticaleCompacte : styles.caseCompacte),
           pleine && styles.casePleine,
           depensee && { opacity: clignotement },
-          nouvelle && { transform: [{ scaleY: pop.interpolate({ inputRange: [0, 1], outputRange: [1.8, 1] }) }] },
+          nouvelle && {
+            transform: [verticale ? { scaleX: pop.interpolate({ inputRange: [0, 1], outputRange: [1.5, 1] }) } : { scaleY: pop.interpolate({ inputRange: [0, 1], outputRange: [1.8, 1] }) }],
+          },
         ]}
       />
     )
   }
 
-  return (
-    <View style={styles.conteneur}>
-      <Ionicons name="flash" size={compacte ? 12 : 16} color="#F5A524" />
+  const nombre = (
+    <View style={[styles.entete, verticale && styles.enteteVerticale]}>
+      <Ionicons name="flash" size={compacte ? 11 : 14} color={styles.neon.color} />
       <Text style={[styles.nombre, compacte && styles.nombreCompact]}>{energie}</Text>
-      <View style={styles.cases}>{cases}</View>
+    </View>
+  )
+
+  return (
+    <View style={[styles.cadre, verticale ? styles.cadreVertical : styles.cadreHorizontal, compacte && styles.cadreCompact]}>
+      {nombre}
+      {/* Rail lumineux le long des segments (détail « HUD ») */}
+      <View style={[styles.cases, verticale ? styles.casesVerticales : styles.casesHorizontales]}>{cases}</View>
       {gain && (
         <Animated.Text
           style={[

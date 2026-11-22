@@ -18,38 +18,42 @@ const styles = StyleSheet.create({
     position: 'absolute',
     borderWidth: 6,
   },
-  barreFond: {
-    height: 7,
-    borderRadius: 4,
-    backgroundColor: 'rgba(23,30,51,0.12)',
-    overflow: 'hidden',
-    marginTop: 4,
-  },
-  barrePleine: {
-    height: '100%',
-    borderRadius: 4,
-  },
-  ligneInfos: {
+  entetePv: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 2,
+    alignItems: 'flex-end',
+    height: 18,
+    marginBottom: 2,
+  },
+  blocPv: {
+    alignItems: 'flex-end',
+    width: '60%',
   },
   textePv: {
     fontFamily: polices.titre,
-    fontSize: 14,
+    fontSize: 17,
+    lineHeight: 18,
     color: couleurs.texte,
-  },
-  textePvMax: {
-    fontFamily: polices.grasse,
-    fontSize: 11,
-    color: couleurs.texteSecondaire,
+    textShadowColor: '#FFFFFF',
+    textShadowRadius: 3,
   },
   textePvPetit: {
-    fontFamily: polices.tresGrasse,
-    fontSize: 11,
-    color: couleurs.texte,
-    textAlign: 'center',
+    fontSize: 12,
+    lineHeight: 13,
+  },
+  barreFond: {
+    width: '100%',
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: 'rgba(23,30,51,0.15)',
+    overflow: 'hidden',
+  },
+  barreFondPetite: {
+    height: 3,
+  },
+  barrePleine: {
+    height: '100%',
+    borderRadius: 3,
   },
   badges: {
     flexDirection: 'row',

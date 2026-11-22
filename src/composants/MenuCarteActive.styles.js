@@ -1,70 +1,85 @@
 import { StyleSheet } from 'react-native'
 import { couleurs, espaces, rayons, polices, tailles, RATIO_CARTE } from '../theme'
 
+const LARGEUR_CARTE = 220
+const LARGEUR_PANNEAU = 300
+
 const styles = StyleSheet.create({
+  // Plateau assombri, tout est centré
   fond: {
     flex: 1,
-    backgroundColor: 'rgba(10, 14, 30, 0.55)',
-    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(10, 18, 36, 0.62)',
     alignItems: 'center',
-  },
-  feuille: {
-    width: '100%',
-    maxWidth: 480,
-    backgroundColor: couleurs.surface,
-    borderTopLeftRadius: rayons.enorme,
-    borderTopRightRadius: rayons.enorme,
+    justifyContent: 'center',
     padding: espaces.l,
-    paddingBottom: espaces.xxl,
-    gap: espaces.s,
   },
-  entete: {
-    flexDirection: 'row',
-    gap: espaces.m,
-    marginBottom: espaces.xs,
+  boutonFermer: {
+    position: 'absolute',
+    top: 48,
+    right: espaces.l,
+    width: 44,
+    height: 44,
+    borderRadius: rayons.rond,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.18)',
+  },
+  colonne: {
+    alignItems: 'center',
+    gap: espaces.s,
+    width: LARGEUR_PANNEAU,
+    maxWidth: '100%',
+  },
+
+  jauge: {
+    width: '100%',
+  },
+
+  // La carte en grand
+  zoneCarte: {
+    marginTop: espaces.xs,
+  },
+  cadreCarte: {
+    width: LARGEUR_CARTE,
+    height: LARGEUR_CARTE / RATIO_CARTE,
+    borderRadius: 12,
+    overflow: 'hidden',
+    borderWidth: 3,
+    borderColor: couleurs.surface,
   },
   image: {
-    width: 76,
-    height: 76 / RATIO_CARTE,
-    borderRadius: 6,
+    width: '100%',
+    height: '100%',
   },
-  infos: {
-    flex: 1,
-    justifyContent: 'center',
-    gap: 4,
+  // PV actuels, en pastille sur le coin haut droit de la carte
+  pastillePv: {
+    position: 'absolute',
+    top: -10,
+    right: -18,
+    minWidth: 96,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: rayons.moyen,
+    backgroundColor: couleurs.surface,
+    shadowColor: '#000',
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 6,
   },
-  nom: {
+  textePv: {
     fontFamily: polices.titre,
-    fontSize: tailles.grande,
+    fontSize: tailles.moyenne,
     color: couleurs.texte,
   },
-  ligneType: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: espaces.s,
-  },
-  pastilleType: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: rayons.rond,
-  },
-  texteType: {
-    fontFamily: polices.tresGrasse,
-    fontSize: 11,
-    color: couleurs.texteInverse,
-  },
-  faiblesse: {
+  textePvMax: {
     fontFamily: polices.grasse,
-    fontSize: 12,
+    fontSize: 11,
     color: couleurs.texteSecondaire,
   },
-  pv: {
-    fontFamily: polices.tresGrasse,
-    fontSize: 13,
-    color: couleurs.texte,
-  },
   barrePv: {
-    height: 6,
+    height: 5,
+    marginTop: 3,
     borderRadius: rayons.rond,
     backgroundColor: couleurs.surfaceDouce,
     overflow: 'hidden',
@@ -74,25 +89,29 @@ const styles = StyleSheet.create({
     backgroundColor: couleurs.succes,
   },
   barrePvBasse: {
-    backgroundColor: '#E2483D',
-  },
-  boutonFermer: {
-    width: 44,
-    height: 44,
-    borderRadius: rayons.rond,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: couleurs.fond,
+    backgroundColor: couleurs.danger,
   },
 
-  // Une attaque
+  // Panneau des attaques : il chevauche le bas de la carte
+  panneau: {
+    width: '100%',
+    marginTop: -46,
+    padding: espaces.s,
+    gap: 6,
+    borderRadius: rayons.grand,
+    backgroundColor: couleurs.surface,
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 10,
+  },
   attaque: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: espaces.m,
-    minHeight: 60,
+    gap: espaces.s,
+    minHeight: 54,
     paddingHorizontal: espaces.m,
-    paddingVertical: espaces.s,
     borderRadius: rayons.moyen,
     backgroundColor: couleurs.principaleClaire,
     borderWidth: 2,
@@ -101,8 +120,6 @@ const styles = StyleSheet.create({
   cout: {
     flexDirection: 'row',
     gap: 2,
-    width: 62,
-    flexWrap: 'wrap',
   },
   pastilleEnergie: {
     width: 18,
@@ -111,6 +128,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: couleurs.ticket,
+  },
+  pastillePetite: {
+    width: 15,
+    height: 15,
   },
   texteAttaque: {
     flex: 1,
@@ -122,12 +143,11 @@ const styles = StyleSheet.create({
   },
   effets: {
     fontFamily: polices.normale,
-    fontSize: 12,
+    fontSize: 11,
     color: couleurs.texteSecondaire,
-    marginTop: 1,
   },
   raison: {
-    color: '#C0392B',
+    color: couleurs.danger,
   },
   degats: {
     fontFamily: polices.titre,
@@ -143,11 +163,10 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     opacity: 1,
   },
-
   talent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: espaces.m,
+    gap: espaces.s,
     paddingHorizontal: espaces.m,
     paddingVertical: espaces.s,
     borderRadius: rayons.moyen,
@@ -155,31 +174,31 @@ const styles = StyleSheet.create({
   },
   nomTalent: {
     fontFamily: polices.tresGrasse,
-    fontSize: 14,
+    fontSize: 13,
     color: couleurs.principaleFoncee,
   },
 
+  // Retraite : pilule compacte alignée à droite
   retraite: {
+    alignSelf: 'flex-end',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: espaces.s,
-    height: 50,
-    paddingHorizontal: espaces.l,
-    marginTop: espaces.xs,
-    borderRadius: rayons.moyen,
-    backgroundColor: couleurs.fond,
+    gap: 6,
+    height: 40,
+    paddingHorizontal: espaces.m,
+    borderRadius: rayons.rond,
+    backgroundColor: couleurs.surface,
     borderWidth: 2,
     borderColor: 'transparent',
   },
   texteRetraite: {
-    flex: 1,
-    fontFamily: polices.tresGrasse,
-    fontSize: 15,
-    color: couleurs.principaleFoncee,
-  },
-  coutRetraite: {
     fontFamily: polices.tresGrasse,
     fontSize: 14,
+    color: couleurs.principaleFoncee,
+  },
+  raisonRetraite: {
+    fontFamily: polices.grasse,
+    fontSize: 12,
     color: couleurs.texteSecondaire,
   },
 })

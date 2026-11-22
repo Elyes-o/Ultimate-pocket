@@ -116,6 +116,22 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
   1re réussite : booster Hyrule offert (s'ouvre directement). Pas de stats ni d'Éclats. `JoueurContexte.tutoriel`
   = `{ propose, termine }`.
 
+### Plateau de combat façon TCG Pocket + jauge HUD (2026-11-22)
+- Fond : `assets/visuels/arene-combat.webp` (image ORIGINALE dessinée par script : grand ovale, moitié violette
+  pour l'adversaire, moitié cyan pour toi, anneau blanc, emblème cristal). Posé sous l'écran de combat.
+- Adversaire en haut (banc, carte active), toi en bas. 4 places par banc, places vides en pointillés (pas pour
+  le boss). PV en GROS au-dessus de chaque carte avec leur barre (`CarteCombat`). Message dans une pastille au milieu.
+- Étiquettes de camp penchées : « Bot … » en haut à droite, « Toi » en bas à gauche.
+- Bas de l'écran : ta **main** = ton Supporter et ton Objet en cartes penchées (grisées une fois utilisées),
+  à droite les Ultimes (pastilles dorées) et « Se concentrer » (pilule blanche).
+- `JaugeEnergie` style **HUD** : capsule nuit, contour cyan néon, 10 segments lumineux ; `verticale` (plateau,
+  se remplit de bas en haut ; la tienne à droite, celle du bot en petit à gauche) ou horizontale (menu de la carte).
+- Le nom et le type de ta carte active sont à GAUCHE de la carte (ta jauge est à droite).
+- **Menu d'attaque façon Pocket** (`MenuCarteActive`) : toucher ta carte la montre EN GRAND au centre (zoom),
+  plateau assombri, jauge HUD au-dessus, pastille des PV actuels sur le coin de la carte, attaques en grandes
+  barres qui chevauchent le bas de la carte, Talent dessous, petit bouton « Retraite » à droite avec son coût
+  (ou « Bloqué ce tour », « Il manque X ⚡ », « gratuite »).
+
 ### Boss Ganondorf (2026-11-22) — données dans `src/donnees/boss.js`, chiffres PROVISOIRES
 - Ganondorf SEUL (400 PV) contre tes 5 cartes : tu gagnes en le mettant KO, tu perds si 3 de tes cartes tombent.
   Ses attaques de boss remplacent celles de sa carte (`combattant.attaques`). C'est toujours au joueur de commencer.

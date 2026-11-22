@@ -91,5 +91,10 @@
 - Combat de boss à 2 phases (400 PV, phase 2 à 200), débloqué après le bot Difficile, booster offert à la 1re victoire.
 - Difficulté re-mesurée par simulation après la nouvelle règle d'Énergie ; bots Normal et Difficile réajustés.
 
+## Session du 2026-11-22 — plateau de combat
+- Écran de combat refait façon TCG Pocket (arène ovale, bancs à 4 places, PV au-dessus des cartes, main avec
+  Supporter + Objet, étiquettes de camp) et jauge d'Énergie verticale style HUD néon.
+- Menu d'attaque refait comme dans Pocket : carte zoomée au centre, attaques en barres dessous, Retraite à droite.
+
 ## Règle de mise à jour
 À chaque nouvelle session : ajouter une section datée ici, puis mettre à jour `CLAUDE.md` si une décision change.

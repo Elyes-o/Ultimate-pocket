@@ -52,30 +52,70 @@ const styles = StyleSheet.create({
   },
 
   // Arène
+  // Plateau : image d'arène en fond (ovale violet en haut, cyan en bas)
+  imageArene: {
+    ...StyleSheet.absoluteFill,
+    width: '100%',
+    height: '100%',
+  },
   arene: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: 6,
-    paddingBottom: 6,
+    justifyContent: 'space-around',
+    paddingTop: 2,
   },
   ligneBot: {
-    flexDirection: 'row',
+    width: '100%',
     alignItems: 'center',
-    gap: espaces.m,
   },
-  energieBot: {
-    width: 96,
+  jaugeBot: {
+    position: 'absolute',
+    left: espaces.m,
+    top: 0,
+  },
+  // Étiquettes des camps, penchées comme des onglets (coin haut droit / bas gauche)
+  etiquetteAdversaire: {
+    position: 'absolute',
+    right: -6,
+    top: -30,
+    maxWidth: 110,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderTopLeftRadius: 12,
+    borderBottomLeftRadius: 12,
+    backgroundColor: '#2A2470',
+    transform: [{ skewX: '-12deg' }],
+  },
+  etiquetteJoueur: {
+    position: 'absolute',
+    left: -6,
+    top: -14,
+    paddingHorizontal: 14,
+    paddingVertical: 4,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
+    backgroundColor: couleurs.principaleFoncee,
+    transform: [{ skewX: '-12deg' }],
+  },
+  texteEtiquetteCamp: {
+    fontFamily: polices.tresGrasse,
+    fontSize: 12,
+    color: couleurs.texteInverse,
   },
   banc: {
     flexDirection: 'row',
-    gap: 6,
-    minHeight: 66,
+    gap: 8,
+  },
+  placeVide: {
+    marginTop: 20, // la hauteur du nombre de PV au-dessus des cartes
+    borderRadius: 6,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    borderColor: 'rgba(255,255,255,0.9)',
+    backgroundColor: 'rgba(255,255,255,0.25)',
   },
   placeActive: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: espaces.m,
   },
   // Boss : PV de Ganondorf en haut, voile rouge en phase 2
   barreBoss: {
@@ -159,8 +199,21 @@ const styles = StyleSheet.create({
     color: couleurs.texteSecondaire,
     textAlign: 'center',
   },
+  // Nom et type, à droite de la carte active (la carte reste bien au centre)
   etiquetteActif: {
-    width: 120,
+    position: 'absolute',
+    left: '50%',
+    marginLeft: 100 / 2 + 10,
+    top: 40,
+    width: 110,
+  },
+  texteADroite: {
+    textAlign: 'right',
+  },
+  // Ta carte : le texte passe à GAUCHE (ta jauge d'Énergie est à droite)
+  etiquetteActifGauche: {
+    marginLeft: -(100 / 2 + 10 + 110),
+    alignItems: 'flex-end',
   },
   nomActif: {
     fontFamily: polices.titre,
@@ -172,38 +225,119 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: couleurs.texteSecondaire,
   },
+  // Ce qui vient de se passer, dans une pastille au milieu du plateau
   message: {
+    maxWidth: 300,
     fontFamily: polices.grasse,
     fontSize: 13,
     color: couleurs.texte,
     textAlign: 'center',
-    paddingHorizontal: espaces.xl,
+    paddingHorizontal: espaces.m,
+    paddingVertical: 4,
+    borderRadius: rayons.moyen,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255,255,255,0.8)',
   },
 
-  // Panneau d'actions
-  panneau: {
+  // Bas de l'écran : main, étiquette, actions
+  jaugeJoueur: {
+    position: 'absolute',
+    right: espaces.m,
+    bottom: 6,
+  },
+  zoneBas: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
     paddingHorizontal: espaces.l,
     paddingTop: espaces.m,
-    gap: 8,
-    backgroundColor: couleurs.surface,
-    borderTopLeftRadius: rayons.enorme,
-    borderTopRightRadius: rayons.enorme,
+  },
+  main: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    marginLeft: 4,
+  },
+  carteMain: {
+    marginRight: -10, // les cartes se chevauchent un peu, comme dans une main
+    alignItems: 'center',
+  },
+  cadreMain: {
+    width: 64,
+    height: 64 / RATIO_CARTE,
+    borderRadius: 6,
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: couleurs.surface,
     ...ombre,
   },
-  attente: {
+  carteMainEteinte: {
+    opacity: 0.45,
+  },
+  carteMainEnAvant: {
+    transform: [{ translateY: -10 }, { scale: 1.08 }],
+  },
+  imagePleine: {
+    width: '100%',
+    height: '100%',
+  },
+  texteUtilise: {
+    position: 'absolute',
+    bottom: 30,
     fontFamily: polices.tresGrasse,
-    fontSize: tailles.normale,
+    fontSize: 11,
+    color: couleurs.texteInverse,
+    backgroundColor: 'rgba(27, 43, 72, 0.8)',
+    paddingHorizontal: 6,
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  actionsDroite: {
+    flex: 1,
+    alignItems: 'flex-end',
+    gap: 8,
+    marginLeft: espaces.l,
+  },
+  pastilleAttente: {
+    paddingHorizontal: espaces.l,
+    paddingVertical: espaces.m,
+    borderRadius: rayons.rond,
+    backgroundColor: 'rgba(255,255,255,0.85)',
+  },
+  texteAttente: {
+    fontFamily: polices.tresGrasse,
+    fontSize: 13,
     color: couleurs.texteSecondaire,
-    textAlign: 'center',
-    paddingVertical: espaces.xl,
+  },
+  boutonConcentrer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    minHeight: 48,
+    paddingHorizontal: espaces.l,
+    borderRadius: rayons.rond,
+    backgroundColor: couleurs.surface,
+    borderWidth: 2,
+    borderColor: couleurs.principaleClaire,
+    ...ombre,
+  },
+  texteConcentrer: {
+    fontFamily: polices.tresGrasse,
+    fontSize: 14,
+    color: couleurs.principaleFoncee,
+  },
+  detailConcentrer: {
+    fontFamily: polices.grasse,
+    fontSize: 11,
+    color: couleurs.texteSecondaire,
   },
   boutonUltime: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: espaces.s,
+    gap: 6,
     minHeight: 44,
+    maxWidth: 230,
     paddingHorizontal: espaces.m,
-    borderRadius: rayons.moyen,
+    borderRadius: rayons.rond,
   },
   ultimePret: {
     backgroundColor: '#F5A524',
@@ -227,41 +361,8 @@ const styles = StyleSheet.create({
   texteUltimeEnCharge: {
     color: '#8A5A08',
   },
-  coutUltime: {
-    fontFamily: polices.titre,
-    fontSize: 14,
-    color: '#FFFFFF',
-  },
   boutonDesactive: {
     opacity: 0.4,
-  },
-  rangeeActions: {
-    flexDirection: 'row',
-    gap: 6,
-  },
-  petiteAction: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 6,
-    paddingHorizontal: 2,
-    borderRadius: rayons.moyen,
-    backgroundColor: couleurs.fond,
-  },
-  textePetiteAction: {
-    fontFamily: polices.tresGrasse,
-    fontSize: 11,
-    color: couleurs.texte,
-    marginTop: 2,
-  },
-  detailPetiteAction: {
-    fontFamily: polices.grasse,
-    fontSize: 10,
-    color: couleurs.texteSecondaire,
-  },
-  vignette: {
-    width: 14,
-    height: 14 / RATIO_CARTE,
-    borderRadius: 2,
   },
 
   // Fenêtres (fiche de carte, choix du banc, résultat)

@@ -22,13 +22,15 @@ import { bossGanondorf } from '../src/donnees/boss'
 import { deckJoueurTutoriel, deckBotTutoriel, pvBotTutoriel, etapesTutoriel } from '../src/donnees/tutoriel'
 import { useJoueur } from '../src/donnees/JoueurContexte'
 import { useEffetsSonores } from '../src/sons'
-import { couleurs } from '../src/theme'
+import { couleurs, RATIO_CARTE } from '../src/theme'
 import styles from '../src/ecrans/Partie.styles'
 import FondJeu from '../src/composants/FondJeu'
 
 const DELAI_BOT = 1300 // le bot "réfléchit" un peu avant de jouer (millisecondes)
-const LARGEUR_ACTIF = 90
-const LARGEUR_BANC = 34
+const LARGEUR_ACTIF = 100
+const LARGEUR_BANC = 52
+const PLACES_BANC = 4 // 4 places sur chaque banc (les vides sont dessinées en pointillés)
+const LARGEUR_MAIN = 64 // cartes Supporter / Objet dans ta main
 const ANIMATION_NATIVE = Platform.OS !== 'web'
 
 // Cartes à montrer dans la cinématique d'un combo
@@ -45,16 +47,38 @@ function attaqueRecuePar(evenement, idCamp) {
   return evenement && evenement.type === 'attaque' && evenement.attaquant !== idCamp
 }
 
-// Le banc d'un camp (petites cartes avec leurs PV)
-function Banc({ camp, idCamp, evenement }) {
+// Le banc d'un camp : 4 places, cartes avec leurs PV, places vides en pointillés
+// "avecPlacesVides" : false pour le boss, qui n'a pas de banc
+function Banc({ camp, idCamp, evenement, avecPlacesVides = true }) {
   const recue = attaqueRecuePar(evenement, idCamp) && evenement.zone
   const coup = recue ? { id: evenement.id, couleur: couleursTypes[evenement.typeAttaquant] } : null
+  const placesVides = avecPlacesVides ? Math.max(0, PLACES_BANC - camp.banc.length) : 0
   return (
     <View style={styles.banc}>
       {camp.banc.map((combattant) => (
         <CarteCombat key={combattant.numero} combattant={combattant} largeur={LARGEUR_BANC} coup={coup} detaille={false} />
       ))}
+      {Array.from({ length: placesVides }).map((_, index) => (
+        <View key={'vide-' + index} style={[styles.placeVide, { width: LARGEUR_BANC, height: LARGEUR_BANC / RATIO_CARTE }]} />
+      ))}
     </View>
+  )
+}
+
+// Une carte de ta main (Supporter ou Objet), un peu penchée comme dans une vraie main
+function CarteEnMain({ numero, utilise, inclinaison, actif, misEnAvant, quandOnTouche }) {
+  return (
+    <Pressable
+      onPress={quandOnTouche}
+      disabled={!actif}
+      style={[styles.carteMain, { transform: [{ rotate: inclinaison + 'deg' }] }, misEnAvant && styles.carteMainEnAvant]}
+      accessibilityLabel={trouverCarte(numero).nom + (utilise ? ', déjà utilisée' : '')}
+    >
+      <View style={[styles.cadreMain, (utilise || !actif) && styles.carteMainEteinte]}>
+        <Image source={trouverCarte(numero).image} style={styles.imagePleine} />
+      </View>
+      {utilise && <Text style={styles.texteUtilise}>Utilisée</Text>}
+    </Pressable>
   )
 }
 
@@ -86,6 +110,7 @@ function PlaceActive({ camp, idCamp, evenement, quandOnTouche, invite = false, e
   return (
     <View style={styles.placeActive}>
       <Pressable
+        style={{ width: LARGEUR_ACTIF }}
         onPress={quandOnTouche}
         disabled={!quandOnTouche}
         accessibilityLabel={estJoueur && camp.actif ? 'Ta carte active ' + camp.actif.nom + ' : attaquer ou retraite' : undefined}
@@ -110,14 +135,14 @@ function PlaceActive({ camp, idCamp, evenement, quandOnTouche, invite = false, e
         {recue && <DegatsFlottants key={evenement.id} evenement={evenement} />}
       </Pressable>
       {camp.actif && (
-        <View style={styles.etiquetteActif}>
-          <Text style={styles.nomActif} numberOfLines={1}>
+        <View style={[styles.etiquetteActif, estJoueur && styles.etiquetteActifGauche]}>
+          <Text style={[styles.nomActif, estJoueur && styles.texteADroite]} numberOfLines={1}>
             {camp.actif.nom}
           </Text>
-          <Text style={styles.typeActif}>
+          <Text style={[styles.typeActif, estJoueur && styles.texteADroite]}>
             {nomsTypes[camp.actif.type]}, faible : {nomsTypes[camp.actif.faiblesse]}
           </Text>
-          {invite && <Text style={styles.indicationCarte}>Touche ta carte pour attaquer</Text>}
+          {invite && <Text style={[styles.indicationCarte, styles.texteADroite]}>Touche ta carte pour attaquer</Text>}
         </View>
       )}
     </View>
@@ -365,6 +390,8 @@ export default function EcranPartie() {
   return (
     <FondJeu>
       {/* Phase 2 du boss : un voile rouge sur tout l'écran */}
+      {/* Le plateau de jeu (image originale) */}
+      <Image source={require('../assets/visuels/arene-combat.webp')} resizeMode="cover" style={styles.imageArene} />
       {modeBoss && etat.boss.phase === 2 && <View pointerEvents="none" style={styles.voilePhase2} />}
       <View style={[styles.ecran, { paddingTop: marges.top + 6 }]}>
         {/* Score et tour */}
@@ -399,17 +426,23 @@ export default function EcranPartie() {
           />
         )}
 
-        {/* L'arène (tremble pendant les Ultimes) */}
+        {/* Le plateau (tremble pendant les Ultimes) */}
         <Animated.View
           style={[
             styles.arene,
             { transform: [{ translateX: secousseEcran.interpolate({ inputRange: [-1, 1], outputRange: [-10, 10] }) }] },
           ]}
         >
+          {/* Côté adversaire : étiquette, jauge et banc */}
           <View style={styles.ligneBot}>
-            <Banc camp={campBot} idCamp="bot" evenement={etat.evenement} />
-            <View style={styles.energieBot}>
-              <JaugeEnergie energie={campBot.energie} compacte />
+            <View style={styles.jaugeBot}>
+              <JaugeEnergie energie={campBot.energie} compacte verticale />
+            </View>
+            <Banc camp={campBot} idCamp="bot" evenement={etat.evenement} avecPlacesVides={!modeBoss} />
+            <View style={styles.etiquetteAdversaire}>
+              <Text style={styles.texteEtiquetteCamp} numberOfLines={1}>
+                {modeBoss ? 'Boss' : modeTutoriel ? 'Mannequin' : 'Bot ' + niveau.nom}
+              </Text>
             </View>
           </View>
 
@@ -429,53 +462,78 @@ export default function EcranPartie() {
           />
 
           <Banc camp={campJoueur} idCamp="joueur" evenement={etat.evenement} />
+
+          {/* Ta jauge d'Énergie, debout sur le côté droit du plateau */}
+          <View style={[styles.jaugeJoueur, etape?.cible === 'jauge' && styles.cibleTutoriel]}>
+            <JaugeEnergie energie={campJoueur.energie} apercu={apercuCout} verticale />
+          </View>
         </Animated.View>
 
-        {/* Panneau d'actions */}
-        <View style={[styles.panneau, { paddingBottom: marges.bottom + 10 }]}>
-          <View style={etape?.cible === 'jauge' && styles.cibleTutoriel}>
-            <JaugeEnergie energie={campJoueur.energie} apercu={apercuCout} />
+        {/* Bas de l'écran : ta main (Supporter + Objet), « Se concentrer » et les Ultimes */}
+        <View style={[styles.zoneBas, { paddingBottom: marges.bottom + 8 }]}>
+          <View style={styles.etiquetteJoueur}>
+            <Text style={styles.texteEtiquetteCamp}>Toi</Text>
           </View>
 
-          {!possibles.aSonTour ? (
-            <Text style={styles.attente}>
-              {etat.gagnant ? 'Combat terminé' : etat.remplacementEnAttente ? 'Choisis ton combattant…' : 'Le bot réfléchit…'}
-            </Text>
-          ) : (
-            <>
-              {/* Ultimes disponibles */}
-              {possibles.ultimes.map(({ combo, possible }) => (
-                <Pressable
-                  key={combo.id}
-                  style={[
-                    styles.boutonUltime,
-                    possible ? styles.ultimePret : styles.ultimeEnCharge,
-                    !autorise('ultime') && styles.boutonDesactive,
-                    etape?.cible === 'ultime' && styles.cibleTutoriel,
-                  ]}
-                  onPress={() => lancerUltime(combo)}
-                  onPressIn={() => setApercuCout(Math.min(combo.cout, campJoueur.energie))}
-                  onPressOut={() => setApercuCout(0)}
-                  disabled={!possible || !autorise('ultime')}
-                >
-                  <Ionicons name="flash" size={18} color={possible ? '#FFFFFF' : '#B5700A'} />
-                  <View style={styles.infosUltime}>
-                    <Text style={[styles.texteUltime, !possible && styles.texteUltimeEnCharge]}>{combo.ultime}</Text>
-                    <Text style={[styles.detailUltime, !possible && styles.texteUltimeEnCharge]}>
-                      {texteUltime(combo)}
-                    </Text>
-                  </View>
-                  <Text style={[styles.coutUltime, !possible && styles.texteUltimeEnCharge]}>
-                    {Math.min(campJoueur.energie, combo.cout)} / {combo.cout} ⚡
-                  </Text>
-                </Pressable>
-              ))}
+          <View style={styles.main}>
+            <CarteEnMain
+              numero={campJoueur.supporter.numero}
+              utilise={campJoueur.supporter.utilise}
+              inclinaison={-7}
+              actif={possibles.supporterDispo && autorise('supporter')}
+              misEnAvant={etape?.cible === 'supporter'}
+              quandOnTouche={() => setFicheCarte('supporter')}
+            />
+            <CarteEnMain
+              numero={campJoueur.objet.numero}
+              utilise={campJoueur.objet.utilise}
+              inclinaison={6}
+              actif={possibles.objetDispo && autorise('objet')}
+              misEnAvant={etape?.cible === 'objet'}
+              quandOnTouche={() => setFicheCarte('objet')}
+            />
+          </View>
 
-              {/* Autres actions */}
-              <View style={styles.rangeeActions}>
+          <View style={styles.actionsDroite}>
+            {!possibles.aSonTour ? (
+              <View style={styles.pastilleAttente}>
+                <Text style={styles.texteAttente}>
+                  {etat.gagnant ? 'Combat terminé' : etat.remplacementEnAttente ? 'Choisis ton combattant…' : 'Le bot réfléchit…'}
+                </Text>
+              </View>
+            ) : (
+              <>
+                {/* Ultimes : pastilles dorées quand ils sont prêts */}
+                {possibles.ultimes.map(({ combo, possible }) => (
+                  <Pressable
+                    key={combo.id}
+                    style={[
+                      styles.boutonUltime,
+                      possible ? styles.ultimePret : styles.ultimeEnCharge,
+                      !autorise('ultime') && styles.boutonDesactive,
+                      etape?.cible === 'ultime' && styles.cibleTutoriel,
+                    ]}
+                    onPress={() => lancerUltime(combo)}
+                    onPressIn={() => setApercuCout(Math.min(combo.cout, campJoueur.energie))}
+                    onPressOut={() => setApercuCout(0)}
+                    disabled={!possible || !autorise('ultime')}
+                    accessibilityLabel={'Ultime ' + combo.ultime + ', ' + combo.cout + ' Énergie, ' + texteUltime(combo)}
+                  >
+                    <Ionicons name="flash" size={16} color={possible ? '#FFFFFF' : '#B5700A'} />
+                    <View style={styles.infosUltime}>
+                      <Text style={[styles.texteUltime, !possible && styles.texteUltimeEnCharge]} numberOfLines={1}>
+                        {combo.ultime}
+                      </Text>
+                      <Text style={[styles.detailUltime, !possible && styles.texteUltimeEnCharge]} numberOfLines={1}>
+                        {Math.min(campJoueur.energie, combo.cout)} / {combo.cout} ⚡
+                      </Text>
+                    </View>
+                  </Pressable>
+                ))}
+
                 <Pressable
                   style={[
-                    styles.petiteAction,
+                    styles.boutonConcentrer,
                     !autorise('concentration') && styles.boutonDesactive,
                     etape?.cible === 'concentration' && styles.cibleTutoriel,
                   ]}
@@ -483,43 +541,14 @@ export default function EcranPartie() {
                   disabled={!autorise('concentration')}
                 >
                   <Ionicons name="hourglass-outline" size={16} color={couleurs.principaleFoncee} />
-                  <Text style={styles.textePetiteAction}>Se concentrer</Text>
-                  <Text style={styles.detailPetiteAction}>+1 ⚡, finit le tour</Text>
+                  <View>
+                    <Text style={styles.texteConcentrer}>Se concentrer</Text>
+                    <Text style={styles.detailConcentrer}>+1 ⚡, finit le tour</Text>
+                  </View>
                 </Pressable>
-                <Pressable
-                  style={[
-                    styles.petiteAction,
-                    (!possibles.supporterDispo || !autorise('supporter')) && styles.boutonDesactive,
-                    etape?.cible === 'supporter' && styles.cibleTutoriel,
-                  ]}
-                  onPress={() => setFicheCarte('supporter')}
-                  disabled={!autorise('supporter')}
-                >
-                  <Image source={trouverCarte(campJoueur.supporter.numero).image} style={styles.vignette} />
-                  <Text style={styles.textePetiteAction} numberOfLines={1}>
-                    {trouverCarte(campJoueur.supporter.numero).nom}
-                  </Text>
-                  <Text style={styles.detailPetiteAction}>{campJoueur.supporter.utilise ? 'Utilisé' : 'Supporter'}</Text>
-                </Pressable>
-                <Pressable
-                  style={[
-                    styles.petiteAction,
-                    (!possibles.objetDispo || !autorise('objet')) && styles.boutonDesactive,
-                    etape?.cible === 'objet' && styles.cibleTutoriel,
-                  ]}
-                  onPress={() => setFicheCarte('objet')}
-                  disabled={!autorise('objet')}
-                >
-                  <Image source={trouverCarte(campJoueur.objet.numero).image} style={styles.vignette} />
-                  <Text style={styles.textePetiteAction} numberOfLines={1}>
-                    {trouverCarte(campJoueur.objet.numero).nom}
-                  </Text>
-                  <Text style={styles.detailPetiteAction}>{campJoueur.objet.utilise ? 'Utilisé' : 'Objet'}</Text>
-                </Pressable>
-              </View>
-
-            </>
-          )}
+              </>
+            )}
+          </View>
         </View>
 
         {/* Menu de ta carte active : attaques, Talent, Retraite */}
