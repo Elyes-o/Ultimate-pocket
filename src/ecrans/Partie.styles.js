@@ -77,6 +77,55 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: espaces.m,
   },
+  // Boss : PV de Ganondorf en haut, voile rouge en phase 2
+  barreBoss: {
+    flex: 1,
+    marginHorizontal: espaces.m,
+  },
+  ligneBoss: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    marginBottom: 4,
+  },
+  nomBoss: {
+    flex: 1,
+    fontFamily: polices.titre,
+    fontSize: 15,
+    color: couleurs.texte,
+  },
+  pvBoss: {
+    fontFamily: polices.tresGrasse,
+    fontSize: 13,
+    color: couleurs.texteSecondaire,
+  },
+  fondPvBoss: {
+    height: 10,
+    borderRadius: rayons.rond,
+    backgroundColor: couleurs.surfaceDouce,
+    overflow: 'hidden',
+  },
+  pvBossPlein: {
+    height: '100%',
+    borderRadius: rayons.rond,
+    backgroundColor: '#7B2FBE',
+  },
+  pvBossPhase2: {
+    backgroundColor: couleurs.danger,
+  },
+  reperePhase2: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: '50%',
+    width: 2,
+    backgroundColor: couleurs.surface,
+  },
+  voilePhase2: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: 'rgba(240, 88, 74, 0.12)',
+  },
+
   // Halo qui pulse autour de ta carte quand c'est ton tour (= « touche-moi »)
   halo: {
     position: 'absolute',

@@ -14,10 +14,11 @@ import MenuCarteActive from '../src/composants/MenuCarteActive'
 import BulleTutoriel from '../src/composants/BulleTutoriel'
 import IconeEclat from '../src/composants/IconeEclat'
 import { DegatsFlottants, CarteKo, BandeauTour } from '../src/composants/EffetsCombat'
-import { creerCombat, jouerAction, actionsPossibles } from '../src/combat/moteur'
+import { creerCombat, creerCombatBoss, jouerAction, actionsPossibles } from '../src/combat/moteur'
 import { prochaineActionDuBot } from '../src/combat/bot'
 import { decksBots, energieDepartBots, niveauxBot, fichesSupporters, fichesObjets, combos, nomsTypes, texteUltime, couleursTypes } from '../src/donnees/combat'
 import { trouverCarte } from '../src/donnees/cartes'
+import { bossGanondorf } from '../src/donnees/boss'
 import { deckJoueurTutoriel, deckBotTutoriel, pvBotTutoriel, etapesTutoriel } from '../src/donnees/tutoriel'
 import { useJoueur } from '../src/donnees/JoueurContexte'
 import { useEffetsSonores } from '../src/sons'
@@ -123,14 +124,38 @@ function PlaceActive({ camp, idCamp, evenement, quandOnTouche, invite = false, e
   )
 }
 
+// En mode boss, la barre du haut montre les PV de Ganondorf et sa phase
+function BarreBoss({ ganondorf, phase }) {
+  const pv = ganondorf ? ganondorf.pv : 0
+  const pourcentage = (pv / bossGanondorf.pv) * 100
+  return (
+    <View style={styles.barreBoss}>
+      <View style={styles.ligneBoss}>
+        <Text style={styles.nomBoss} numberOfLines={1}>
+          {phase === 2 ? bossGanondorf.nomPhase2 : bossGanondorf.nom}
+        </Text>
+        <Text style={styles.pvBoss}>
+          {pv} / {bossGanondorf.pv}
+        </Text>
+      </View>
+      <View style={styles.fondPvBoss}>
+        <View style={[styles.pvBossPlein, { width: pourcentage + '%' }, phase === 2 && styles.pvBossPhase2]} />
+        {/* Repère de la phase 2 (moitié des PV) */}
+        <View style={styles.reperePhase2} />
+      </View>
+    </View>
+  )
+}
+
 export default function EcranPartie() {
   const marges = useSafeAreaInsets()
   const { niveau: idNiveau } = useLocalSearchParams()
   const modeTutoriel = idNiveau === 'tutoriel'
-  const niveau = modeTutoriel
-    ? { id: 'tutoriel', nom: 'Mannequin', recompense: 0 }
-    : niveauxBot.find((element) => element.id === idNiveau) ?? niveauxBot[0]
-  const { deckDeCombat, recompenserCombat, terminerTutoriel } = useJoueur()
+  const modeBoss = idNiveau === 'boss'
+  let niveau = niveauxBot.find((element) => element.id === idNiveau) ?? niveauxBot[0]
+  if (modeTutoriel) niveau = { id: 'tutoriel', nom: 'Mannequin', recompense: 0 }
+  if (modeBoss) niveau = { id: 'boss', nom: bossGanondorf.nom, recompense: 0 }
+  const { deckDeCombat, recompenserCombat, recompenserBoss, terminerTutoriel } = useJoueur()
   const { jouerSon, vibrer } = useEffetsSonores()
 
   function nouveauCombat() {
@@ -144,6 +169,9 @@ export default function EcranPartie() {
       }
       combat.message = 'Entraînement avec Impa'
       return combat
+    }
+    if (modeBoss) {
+      return creerCombatBoss(deckDeCombat())
     }
     return creerCombat(deckDeCombat(), decksBots[niveau.id], 'Bot ' + niveau.nom, energieDepartBots[niveau.id])
   }
@@ -244,10 +272,16 @@ export default function EcranPartie() {
     setTimeout(() => jouerSon('recompense'), 900)
   }, [recompense])
 
-  // ----- Un Ultime vient de toucher : tout l'écran tremble -----
+  // ----- Un Ultime vient de toucher (ou le boss se transforme) : tout l'écran tremble -----
   useEffect(() => {
-    if (!etat.evenement || !etat.evenement.ultime) {
+    if (!etat.evenement || (!etat.evenement.ultime && !etat.evenement.phaseBoss)) {
       return
+    }
+    if (etat.evenement.phaseBoss) {
+      setTimeout(() => {
+        jouerSon('ultime')
+        vibrer('fort')
+      }, 400)
     }
     secousseEcran.setValue(0)
     Animated.sequence([
@@ -270,11 +304,15 @@ export default function EcranPartie() {
         // Pas de statistiques ni d'Éclats : un booster offert, seulement la 1re fois
         const victoire = etat.gagnant === 'joueur'
         const premiereFois = victoire && terminerTutoriel()
-        setTimeout(() => setRecompense({ tutoriel: true, booster: premiereFois }), 1500)
+        setTimeout(() => setRecompense({ tutoriel: true, booster: premiereFois ? 'zelda-botw' : null }), 1500)
         return
       }
       const deckJoue = deckDeCombat()
       const numerosJoues = [...deckJoue.combattants, deckJoue.supporter, deckJoue.objet]
+      if (modeBoss) {
+        setTimeout(() => setRecompense({ boss: true, ...recompenserBoss(etat.gagnant === 'joueur', numerosJoues) }), 1500)
+        return
+      }
       setTimeout(() => setRecompense(recompenserCombat(etat.gagnant === 'joueur', niveau.id, numerosJoues)), 1500)
     }
   }, [etat.gagnant])
@@ -326,22 +364,30 @@ export default function EcranPartie() {
 
   return (
     <FondJeu>
+      {/* Phase 2 du boss : un voile rouge sur tout l'écran */}
+      {modeBoss && etat.boss.phase === 2 && <View pointerEvents="none" style={styles.voilePhase2} />}
       <View style={[styles.ecran, { paddingTop: marges.top + 6 }]}>
         {/* Score et tour */}
         <View style={styles.barreHaut}>
           <Pressable style={styles.boutonQuitter} onPress={() => router.back()} accessibilityLabel="Quitter le combat">
             <Ionicons name="close" size={20} color={couleurs.texte} />
           </Pressable>
-          <View style={styles.score}>
-            <Text style={styles.nomScore}>Toi</Text>
-            <Text style={styles.chiffreScore}>
-              {campBot.ko} – {campJoueur.ko}
-            </Text>
-            <Text style={styles.nomScore}>Bot {niveau.nom}</Text>
-          </View>
+          {modeBoss ? (
+            <BarreBoss ganondorf={campBot.actif} phase={etat.boss.phase} />
+          ) : (
+            <View style={styles.score}>
+              <Text style={styles.nomScore}>Toi</Text>
+              <Text style={styles.chiffreScore}>
+                {campBot.ko} – {campJoueur.ko}
+              </Text>
+              <Text style={styles.nomScore}>Bot {niveau.nom}</Text>
+            </View>
+          )}
           <Text style={styles.tour}>Tour {etat.numeroTour}</Text>
         </View>
-        <Text style={styles.regleScore}>Le premier à 3 KO gagne</Text>
+        <Text style={styles.regleScore}>
+          {modeBoss ? 'Mets Ganondorf KO avant de perdre 3 cartes (' + campJoueur.ko + ' / 3)' : 'Le premier à 3 KO gagne'}
+        </Text>
         <BandeauTour tour={etat.tour} numeroTour={etat.numeroTour} />
         {modeTutoriel && (
           <BulleTutoriel
@@ -557,7 +603,9 @@ export default function EcranPartie() {
                 size={56}
                 color={etat.gagnant === 'joueur' ? '#F7B731' : couleurs.texteSecondaire}
               />
-              <Text style={styles.titreResultat}>{etat.gagnant === 'joueur' ? (modeTutoriel ? 'Tutoriel réussi !' : 'Victoire !') : 'Défaite…'}</Text>
+              <Text style={styles.titreResultat}>
+                {etat.gagnant === 'joueur' ? (modeTutoriel ? 'Tutoriel réussi !' : modeBoss ? 'Ganondorf est vaincu !' : 'Victoire !') : 'Défaite…'}
+              </Text>
               {recompense && recompense.tutoriel && (
                 <View style={styles.recompenses}>
                   <Text style={styles.texteTutoriel}>
@@ -585,10 +633,19 @@ export default function EcranPartie() {
                       <Text style={styles.texteRecompense}>+1 Ticket (1re victoire du jour)</Text>
                     </View>
                   )}
+                  {recompense.boss && recompense.booster && (
+                    <View style={styles.ligneRecompense}>
+                      <Ionicons name="gift" size={20} color={couleurs.ticket} />
+                      <Text style={styles.texteRecompense}>Booster Royaume céleste offert !</Text>
+                    </View>
+                  )}
+                  {recompense.boss && recompense.dejaRecuAujourdhui && (
+                    <Text style={styles.texteTutoriel}>Récompense du boss déjà reçue aujourd'hui. Reviens demain !</Text>
+                  )}
                 </View>
               )}
               {recompense && recompense.booster ? (
-                <Pressable style={styles.boutonPrincipal} onPress={() => router.replace('/ouverture?booster=zelda-botw')}>
+                <Pressable style={styles.boutonPrincipal} onPress={() => router.replace('/ouverture?booster=' + recompense.booster)}>
                   <Text style={styles.texteBoutonPrincipal}>Ouvrir mon booster</Text>
                 </Pressable>
               ) : (

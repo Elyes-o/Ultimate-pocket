@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons'
 import IconeEclat from '../../src/composants/IconeEclat'
 import { trouverCarte } from '../../src/donnees/cartes'
 import { niveauxBot } from '../../src/donnees/combat'
+import { bossGanondorf } from '../../src/donnees/boss'
 import { useJoueur } from '../../src/donnees/JoueurContexte'
 import { couleurs } from '../../src/theme'
 import styles from '../../src/ecrans/Combat.styles'
@@ -89,6 +90,13 @@ export default function EcranCombat() {
           )}
         </View>
 
+        {/* Boss : Ganondorf, débloqué après le bot Difficile */}
+        <CarteBoss
+          debloque={statistiques.niveauxBattus.includes(bossGanondorf.niveauRequis)}
+          deckPret={deck !== null}
+          dejaBattu={statistiques.bossBattu}
+        />
+
         {/* Bots */}
         <View style={styles.ligneTitre}>
           <Text style={styles.titreSection}>Contre le bot</Text>
@@ -149,6 +157,31 @@ export default function EcranCombat() {
         </Modal>
       </ScrollView>
     </EcranOnglet>
+  )
+}
+
+// Carte du boss Ganondorf (sombre, avec sa carte en fond)
+function CarteBoss({ debloque, deckPret, dejaBattu }) {
+  const jouable = debloque && deckPret
+  return (
+    <Pressable
+      style={[styles.carteBoss, !jouable && styles.carteBossVerrouillee]}
+      onPress={() => router.push('/partie?niveau=boss')}
+      disabled={!jouable}
+      accessibilityLabel={jouable ? 'Affronter le boss Ganondorf' : 'Boss Ganondorf verrouillé'}
+    >
+      <Image source={trouverCarte(bossGanondorf.numero).image} style={styles.imageBoss} />
+      <View style={styles.infosBoss}>
+        <Text style={styles.surtitreBoss}>Boss</Text>
+        <Text style={styles.nomBoss}>{bossGanondorf.nom}</Text>
+        <Text style={styles.detailBoss}>
+          {debloque
+            ? bossGanondorf.pv + ' PV, 2 phases. ' + (dejaBattu ? '+' + bossGanondorf.eclatsVictoireDuJour + ' Éclats par jour' : 'Booster offert à la 1re victoire')
+            : 'Bats le bot Difficile pour le débloquer'}
+        </Text>
+      </View>
+      <Ionicons name={jouable ? 'skull' : 'lock-closed'} size={28} color={jouable ? '#FF8A7A' : 'rgba(255,255,255,0.5)'} />
+    </Pressable>
   )
 }
 

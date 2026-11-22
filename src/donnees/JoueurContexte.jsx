@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { cartesZelda, toutesLesCartes, trouverCarte, collections } from './cartes'
 import { categorieCarte, niveauxBot, RECOMPENSE_DEFAITE } from './combat'
 import { VALEUR_RECYCLAGE, paliersCollection, cartesRequises } from './collection'
+import { bossGanondorf } from './boss'
 
 // Nom sous lequel la partie est rangée dans le stockage
 const CLE_SAUVEGARDE = 'ultimate-pocket:joueur'
@@ -42,6 +43,8 @@ function partieDeDepart() {
       defaites: 0,
       niveauxBattus: [],
       jourDerniereVictoire: null,
+      bossBattu: false, // Ganondorf déjà vaincu au moins une fois
+      jourRecompenseBoss: null, // dernier jour où la récompense du boss a été donnée
       cartesJouees: {}, // nombre de combats joués par carte, ex. { 9: 4 }
     },
     parametres: { son: true, vibrations: true },
@@ -323,6 +326,37 @@ export function JoueurFournisseur({ children }) {
     return { eclats: niveau.recompense, ticket: premiereVictoireDuJour }
   }
 
+  // Fin d'un combat contre le boss Ganondorf. Renvoie ce qui a été gagné :
+  // { eclats, booster (id du booster offert ou null), dejaRecuAujourdhui }
+  function recompenserBoss(victoire, numerosJoues) {
+    const cartesJouees = { ...statistiques.cartesJouees }
+    for (const numero of numerosJoues) {
+      cartesJouees[numero] = (cartesJouees[numero] ?? 0) + 1
+    }
+    if (!victoire) {
+      setEclats(eclats + RECOMPENSE_DEFAITE)
+      setStatistiques({ ...statistiques, defaites: statistiques.defaites + 1, cartesJouees })
+      return { eclats: RECOMPENSE_DEFAITE, booster: null, dejaRecuAujourdhui: false }
+    }
+    const premiereVictoire = !statistiques.bossBattu
+    const dejaRecuAujourdhui = !premiereVictoire && statistiques.jourRecompenseBoss === dateDuJour()
+    let gain = 0
+    if (premiereVictoire) {
+      gain = bossGanondorf.eclatsPremiereVictoire
+    } else if (!dejaRecuAujourdhui) {
+      gain = bossGanondorf.eclatsVictoireDuJour
+    }
+    setEclats(eclats + gain)
+    setStatistiques({
+      ...statistiques,
+      victoires: statistiques.victoires + 1,
+      bossBattu: true,
+      jourRecompenseBoss: dejaRecuAujourdhui ? statistiques.jourRecompenseBoss : dateDuJour(),
+      cartesJouees,
+    })
+    return { eclats: gain, booster: premiereVictoire ? bossGanondorf.boosterPremiereVictoire : null, dejaRecuAujourdhui }
+  }
+
   // ---------- Tutoriel ----------
 
   // La proposition du tutoriel (1re visite de l'onglet Combat) a été montrée
@@ -389,6 +423,7 @@ export function JoueurFournisseur({ children }) {
     deckDeCombat,
     statistiques,
     recompenserCombat,
+    recompenserBoss,
     parametres,
     changerPseudo,
     setAvatar,

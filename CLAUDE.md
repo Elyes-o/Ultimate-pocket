@@ -88,8 +88,9 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
 - Decks des bots : Difficile = Goron + Piafs + Lynel ; Légendaire = Zora + Gerudo ; Ultime = Prodiges + Héros
   + Lame, démarre à 5 Énergie (`energieDepartBots`). Les 8 combos de CARTES_COMBAT.md sont jouables.
 - Difficulté mesurée (simulation de 2 000 parties par niveau contre un joueur « Normal » au deck aléatoire) :
-  le bot gagne 18 % / 74 % / 82 % / 85 % / 92 % (Facile → Ultime). Mesuré AVANT le passage de la concentration
-  à +1 et la suppression du +1 sur dégâts (2026-11-20) : à re-mesurer.
+  le bot gagne 21 % / 68 % / 72 % / 87 % / 95 % (Facile → Ultime), re-mesuré le 2026-11-22 après la nouvelle
+  règle d'Énergie. Réglages faits pour garder l'ordre : bot Normal avec Hinox au lieu du Lynel, bot Difficile
+  qui démarre à 4 Énergie. Script de simulation : charge les fichiers de `src/` dans node (images remplacées).
 - Écrans : `app/(onglets)/combat.jsx` (deck + bots), `app/deck.jsx`, `app/partie.jsx` (le combat).
 - Composants : `CarteCombat` (entrée, élan, onde de choc colorée par type, voile rouge, PV qui descendent
   doucement), `EffetsCombat` (`DegatsFlottants` + badge Faiblesse, `CarteKo` qui tombe avec tampon « KO ! »,
@@ -114,6 +115,16 @@ Détail des modes de combat : `docs/MODES_DE_JEU.md`.
 - Proposé dans une fenêtre à la 1re visite de l'onglet Combat, rejouable depuis la carte « Apprends à combattre ».
   1re réussite : booster Hyrule offert (s'ouvre directement). Pas de stats ni d'Éclats. `JoueurContexte.tutoriel`
   = `{ propose, termine }`.
+
+### Boss Ganondorf (2026-11-22) — données dans `src/donnees/boss.js`, chiffres PROVISOIRES
+- Ganondorf SEUL (400 PV) contre tes 5 cartes : tu gagnes en le mettant KO, tu perds si 3 de tes cartes tombent.
+  Ses attaques de boss remplacent celles de sa carte (`combattant.attaques`). C'est toujours au joueur de commencer.
+- Phase 2 à 200 PV : nom « Ganondorf, Roi Démon », nouvelles attaques, +1 Énergie par tour, miasmes 20 sur ton
+  banc, écran qui tremble + voile rouge + barre de PV rouge. Moteur : `creerCombatBoss`, `etat.boss.phase`.
+- Cerveau : celui des bots intelligents. Simulation (decks au hasard) : le boss gagne environ 70 %.
+- Débloqué après le bot Difficile (carte sombre « Boss » dans l'onglet Combat, `/partie?niveau=boss`).
+  1re victoire : 300 Éclats + booster Royaume céleste offert. Ensuite : 100 Éclats une fois par jour
+  (`statistiques.bossBattu`, `jourRecompenseBoss`). Défaite : 5 Éclats. Musique de boss.
 
 ## Règles de jeu connues (cartes)
 - Format de carte type Pokémon : PV, attaque(s), type, faiblesse, coût de retraite, plus une ENDURANCE.

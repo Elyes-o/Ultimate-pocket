@@ -234,7 +234,7 @@ export function texteUltime(combo) {
 // Le 1er combattant commence en actif.
 export const decksBots = {
   facile: { combattants: [16, 17, 14, 19, 1], supporter: 15, objet: 20 },
-  normal: { combattants: [12, 13, 10, 11, 18], supporter: 3, objet: 21 },
+  normal: { combattants: [12, 13, 10, 11, 17], supporter: 3, objet: 21 }, // Hinox au lieu du Lynel (2026-11-22, simulation)
   // Difficile : combos Fierté Goron (Daruk + Yunobo) et Ailes Piafs (Revali + Teba), avec Lynel
   difficile: { combattants: [7, 11, 18, 12, 8], supporter: 4, objet: 20 },
   // Légendaire : combos Fratrie Zora (Mipha + Sidon) et Peuple Gerudo (Urbosa + Riju)
@@ -243,8 +243,8 @@ export const decksBots = {
   ultime: { combattants: [7, 8, 9, 6, 23], supporter: 2, objet: 22 },
 }
 
-// Énergie de départ des bots (5 pour le boss Ultime, 3 sinon)
-export const energieDepartBots = { ultime: 5 }
+// Énergie de départ des bots (4 pour Difficile, 5 pour Ultime, 3 sinon) : réglé par simulation le 2026-11-22
+export const energieDepartBots = { difficile: 4, ultime: 5 }
 
 // Niveaux de bot affichés dans le menu Combat
 export const niveauxBot = [

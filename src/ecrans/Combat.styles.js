@@ -246,6 +246,47 @@ const styles = StyleSheet.create({
     fontSize: tailles.normale,
     color: couleurs.texteSecondaire,
   },
+
+  // Boss
+  carteBoss: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: espaces.m,
+    padding: espaces.m,
+    marginBottom: espaces.l,
+    borderRadius: rayons.grand,
+    backgroundColor: '#2A1030',
+    borderWidth: 2,
+    borderColor: '#7B2FBE',
+    borderBottomWidth: 4,
+    borderBottomColor: '#4A1660',
+  },
+  carteBossVerrouillee: {
+    opacity: 0.6,
+  },
+  imageBoss: {
+    width: 56,
+    height: 56 / RATIO_CARTE,
+    borderRadius: 6,
+  },
+  infosBoss: {
+    flex: 1,
+  },
+  surtitreBoss: {
+    fontFamily: polices.tresGrasse,
+    fontSize: 12,
+    color: '#FF8A7A',
+  },
+  nomBoss: {
+    fontFamily: polices.titre,
+    fontSize: tailles.grande,
+    color: couleurs.texteInverse,
+  },
+  detailBoss: {
+    fontFamily: polices.normale,
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.75)',
+  },
 })
 
 export default styles

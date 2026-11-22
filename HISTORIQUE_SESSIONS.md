@@ -87,5 +87,9 @@
   booster « Royaume céleste », sélecteur de collection dans l'onglet Collection.
 - Règle d'Énergie changée juste avant : se concentrer = +1 ⚡, recevoir un coup ne donne plus rien.
 
+## Session du 2026-11-22 — boss Ganondorf
+- Combat de boss à 2 phases (400 PV, phase 2 à 200), débloqué après le bot Difficile, booster offert à la 1re victoire.
+- Difficulté re-mesurée par simulation après la nouvelle règle d'Énergie ; bots Normal et Difficile réajustés.
+
 ## Règle de mise à jour
 À chaque nouvelle session : ajouter une section datée ici, puis mettre à jour `CLAUDE.md` si une décision change.

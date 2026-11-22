@@ -3,6 +3,7 @@
 // Règles : MODES_DE_JEU.md. Données des cartes : src/donnees/combat.js.
 import { trouverCarte } from '../donnees/cartes'
 import { fichesCombattants, fichesSupporters, fichesObjets, combos, numerosProdiges, numerosSages } from '../donnees/combat'
+import { bossGanondorf } from '../donnees/boss'
 
 export const ENERGIE_MAX = 10
 const ENERGIE_DEPART = 3
@@ -52,8 +53,9 @@ function creerCamp(nom, deck, energieDepart) {
     ko: 0,
     actif: combattants[0],
     banc: combattants.slice(1),
-    supporter: { numero: deck.supporter, utilise: false },
-    objet: { numero: deck.objet, utilise: false },
+    // Pas de Supporter / Objet (le boss) : on les marque comme déjà utilisés
+    supporter: { numero: deck.supporter ?? null, utilise: !deck.supporter },
+    objet: { numero: deck.objet ?? null, utilise: !deck.objet },
     bonusProchaineAttaque: 0, // Master Sword
     talentAdverseDesactive: false, // Tablette Sheikah (posée par l'adversaire)
     retraiteGratuiteCeTour: false, // Talent de Revali
@@ -80,7 +82,47 @@ export function creerCombat(deckJoueur, deckBot, nomBot, energieBot = ENERGIE_DE
   }
 }
 
+// Combat de boss : Ganondorf seul (600 PV) contre le deck du joueur. C'est toujours au joueur de commencer.
+export function creerCombatBoss(deckJoueur) {
+  const boss = bossGanondorf
+  const etat = creerCombat(deckJoueur, { combattants: [boss.numero] }, boss.nom)
+  const ganondorf = etat.camps.bot.actif
+  ganondorf.nom = boss.nom
+  ganondorf.pv = boss.pv
+  ganondorf.pvMax = boss.pv
+  ganondorf.attaques = boss.attaquesPhase1 // ses attaques de boss remplacent celles de la carte
+  ganondorf.talentUtilise = true // son Talent est déclenché automatiquement en phase 2
+  etat.boss = { id: boss.id, phase: 1 }
+  etat.tour = 'joueur'
+  etat.message = 'Ganondorf se dresse devant toi !'
+  return etat
+}
+
 // ---------- Petites aides ----------
+
+// Les attaques d'un combattant : celles de sa carte, ou celles de boss si on les a remplacées
+function attaquesDe(combattant) {
+  return combattant.attaques ?? fichesCombattants[combattant.numero].attaques
+}
+
+// Le boss passe en phase 2 quand ses PV descendent sous le seuil
+function verifierPhaseBoss(etat) {
+  const ganondorf = etat.camps.bot.actif
+  if (!etat.boss || etat.boss.phase !== 1 || !ganondorf || ganondorf.pv <= 0 || ganondorf.pv > bossGanondorf.seuilPhase2) {
+    return
+  }
+  etat.boss.phase = 2
+  ganondorf.nom = bossGanondorf.nomPhase2
+  ganondorf.attaques = bossGanondorf.attaquesPhase2
+  // Les miasmes frappent tout le banc du joueur
+  for (const combattant of etat.camps.joueur.banc) {
+    blesser(combattant, bossGanondorf.miasmesPhase2, true)
+  }
+  etat.message = 'Phase 2 : le Roi Démon se réveille ! Ses miasmes frappent ton banc.'
+  if (etat.evenement) {
+    etat.evenement.phaseBoss = true // l'écran s'en sert pour l'effet de transformation
+  }
+}
 
 function ajouterEnergie(camp, quantite) {
   camp.energie = Math.max(0, Math.min(ENERGIE_MAX, camp.energie + quantite))
@@ -193,7 +235,7 @@ export function actionsPossibles(etat, idCamp) {
   return {
     aSonTour,
     attaques: fiche
-      ? fiche.attaques.map((attaque, index) => ({
+      ? attaquesDe(actif).map((attaque, index) => ({
           index,
           attaque,
           possible: aSonTour && !actif.fatigueActive && camp.energie >= Math.max(0, attaque.cout - reduction),
@@ -229,6 +271,10 @@ function passerAuTourSuivant(etat) {
   // Début du tour du nouveau camp : +2 Énergie, ses Boucliers temporaires expirent
   const campQuiCommence = etat.camps[etat.tour]
   ajouterEnergie(campQuiCommence, ENERGIE_PAR_TOUR)
+  // Boss en phase 2 : Énergie en plus à chacun de ses tours
+  if (etat.boss && etat.boss.phase === 2 && etat.tour === 'bot') {
+    ajouterEnergie(campQuiCommence, bossGanondorf.energieBonusPhase2)
+  }
   for (const combattant of combattantsEnVie(campQuiCommence)) {
     combattant.bouclier = 0
     if (combattant.fatigue) {
@@ -327,6 +373,9 @@ function frapper(etat, idCamp, degatsDeBase, effets, nomAttaque) {
     koBanc: adversaire.banc.filter((combattant) => combattant.pv <= 0).map((combattant) => combattant.numero),
   })
 
+  // Boss : passage en phase 2 ?
+  verifierPhaseBoss(etat)
+
   // KO ? (l'adversaire d'abord, puis l'attaquant à cause du recul)
   verifierKo(etat, adversaireDe(idCamp))
   if (!etat.gagnant) {
@@ -350,7 +399,7 @@ function soignerLePlusBlesse(combattants, soin) {
 
 function attaquer(etat, idCamp, indexAttaque) {
   const camp = etat.camps[idCamp]
-  const attaque = fichesCombattants[camp.actif.numero].attaques[indexAttaque]
+  const attaque = attaquesDe(camp.actif)[indexAttaque]
   ajouterEnergie(camp, -Math.max(0, attaque.cout - camp.reductionCoutCeTour))
   camp.reductionCoutCeTour = 0
   frapper(etat, idCamp, attaque.degats, attaque.effets ?? {}, attaque.nom)
